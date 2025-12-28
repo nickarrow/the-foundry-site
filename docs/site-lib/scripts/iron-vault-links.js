@@ -112,7 +112,7 @@
     const titleEl = document.querySelector('#file-explorer .feature-title');
     if (titleEl && !titleEl.querySelector('a')) {
       const text = titleEl.textContent;
-      titleEl.innerHTML = '<a href="index.html">' + text + '</a>';
+      titleEl.innerHTML = '<a href="1.-welcome-to-the-foundry.html">' + text + '</a>';
     }
   }
 
