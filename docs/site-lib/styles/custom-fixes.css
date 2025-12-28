@@ -537,14 +537,19 @@ a[data-datasworn-id] {
   display: none;
 }
 
-/* Make the site title look clickable */
+/* Make the site title look clickable with matching hover style */
 #file-explorer .feature-title a {
   color: inherit;
   text-decoration: none;
+  display: block;
+  margin: -0.25em -0.5em;
+  padding: 0.25em 0.5em;
+  border-radius: var(--radius-s, 4px);
+  transition: background-color 0.1s ease-in-out;
 }
 
 #file-explorer .feature-title a:hover {
-  opacity: 0.8;
+  background-color: var(--nav-item-background-hover, rgba(255, 255, 255, 0.075));
 }
 
 /* Dice expression */
