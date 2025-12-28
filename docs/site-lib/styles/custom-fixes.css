@@ -81,13 +81,22 @@ pre, code, .el-pre, .markdown-preview-view pre {
   top: 0 !important;
 }
 
-/* DEBUG: Test fix - remove contain/overflow that breaks fixed positioning on iOS */
-#left-sidebar.is-collapsed {
-  overflow: visible !important;
-  contain: none !important;
+/* iOS Safari fix for left sidebar toggle visibility when collapsed.
+   
+   The issue: Both sidebars use contain:size which creates a containing block,
+   trapping position:fixed elements inside. The right sidebar works by accident
+   because its topbar uses right:0, keeping it at the visible edge when collapsed.
+   The left sidebar's left:0 gets trapped inside the 0-width collapsed container.
+   
+   Fix: When collapsed, position the left topbar from the RIGHT edge of its 
+   container (like the right sidebar does), so it stays visible at the edge. */
+
+#left-sidebar.is-collapsed .sidebar-topbar {
+  left: auto !important;
+  right: 0 !important;
 }
 
-/* DEBUG: Bright backgrounds to see where elements are rendering */
+/* DEBUG: Bright colors to verify positioning - remove after confirmed working */
 #left-sidebar.is-collapsed .sidebar-topbar {
   background-color: red !important;
 }
