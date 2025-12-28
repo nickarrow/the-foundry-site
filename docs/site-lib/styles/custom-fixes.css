@@ -147,10 +147,22 @@ a[data-datasworn-id] {
   margin: 0;
   padding: 0;
   font-weight: var(--font-semibold);
+  white-space: normal;
+  font-size: inherit;
+  font-family: inherit;
+  max-height: none;
+  overflow-y: visible;
 }
 
 .iron-vault-mechanics dl dd * {
   display: inline;
+}
+
+.iron-vault-mechanics dl dd .markdown-wrapper,
+.iron-vault-mechanics dl dd .markdown-wrapper p {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .iron-vault-mechanics dl dd:before,
