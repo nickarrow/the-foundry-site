@@ -43,12 +43,12 @@
     return null;
   }
 
-  // Convert a span to a link
-  function convertToLink(el, href, pathAttr) {
+  // Convert a span to a link using click handler (avoids base href issues)
+  function convertToLink(el, href) {
     const link = document.createElement('a');
-    link.href = href;
     link.className = el.className;
     link.innerHTML = el.innerHTML;
+    link.style.cursor = 'pointer';
     
     // Copy all data attributes
     Array.from(el.attributes).forEach(function(attr) {
@@ -56,6 +56,19 @@
         link.setAttribute(attr.name, attr.value);
       }
     });
+    
+    // Use click handler to navigate, bypassing base href issues
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Get the base href and construct the full URL
+      const baseEl = document.querySelector('base');
+      const baseHref = baseEl ? baseEl.getAttribute('href') : '.';
+      // Navigate to the path relative to base
+      window.location.href = baseHref + '/' + href;
+    });
+    
+    // Set href for accessibility/right-click (even if not used for navigation)
+    link.href = '#';
     
     el.parentNode.replaceChild(link, el);
   }
@@ -67,7 +80,7 @@
       if (!trackPath) return;
       
       const htmlPath = obsidianToHtmlPath(trackPath);
-      convertToLink(el, htmlPath, 'data-track-path');
+      convertToLink(el, htmlPath);
     });
   }
 
@@ -80,7 +93,7 @@
       // Try to find the full path in the search index
       const resolvedPath = findPageByFilename(entityPath);
       if (resolvedPath) {
-        convertToLink(el, resolvedPath, 'data-entity-path');
+        convertToLink(el, resolvedPath);
       }
     });
   }
