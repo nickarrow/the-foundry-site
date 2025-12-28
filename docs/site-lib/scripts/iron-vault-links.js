@@ -99,12 +99,7 @@
     processEntityPaths();
   }
 
-  // Wait for everything to be ready with a small delay for dynamic includes
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(init, 100);
-    });
-  } else {
-    setTimeout(init, 100);
-  }
+  // Run immediately since this script is loaded dynamically after DOM is ready
+  // Use a small delay to ensure all dynamic content is loaded
+  setTimeout(init, 200);
 })();
