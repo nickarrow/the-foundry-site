@@ -1,14 +1,11 @@
 /**
  * Iron Vault Link Fixer
  * Converts Iron Vault track/entity path spans to working links on the exported site.
- * 
- * Uses URL polling to detect SPA navigation since the site replaces content
- * without triggering standard navigation events.
  */
 (function() {
+  console.log('[IV Links] Script loaded');
+  
   let searchIndex = null;
-  let lastUrl = location.href;
-  let pollInterval = null;
 
   // Load the search index to resolve entity paths
   async function loadSearchIndex() {
@@ -17,9 +14,10 @@
       const response = await fetch('site-lib/search-index.json');
       if (response.ok) {
         searchIndex = await response.json();
+        console.log('[IV Links] Search index loaded');
       }
     } catch (e) {
-      // Silently fail - entity links with just filenames won't work
+      console.log('[IV Links] Failed to load search index', e);
     }
   }
 
@@ -55,7 +53,6 @@
     link.innerHTML = el.innerHTML;
     link.href = href;
     
-    // Copy all data attributes
     Array.from(el.attributes).forEach(function(attr) {
       if (attr.name.startsWith('data-')) {
         link.setAttribute(attr.name, attr.value);
@@ -65,26 +62,28 @@
     el.parentNode.replaceChild(link, el);
   }
 
-  // Process track paths
-  function processTrackPaths() {
-    document.querySelectorAll('span[data-track-path]').forEach(function(el) {
+  // Process all Iron Vault links
+  async function processLinks() {
+    await loadSearchIndex();
+    
+    const trackSpans = document.querySelectorAll('span[data-track-path]');
+    const entitySpans = document.querySelectorAll('span[data-entity-path]');
+    
+    console.log('[IV Links] Processing - found', trackSpans.length, 'track spans,', entitySpans.length, 'entity spans');
+    
+    trackSpans.forEach(function(el) {
       const trackPath = el.getAttribute('data-track-path');
-      if (!trackPath) return;
-      
-      const htmlPath = obsidianToHtmlPath(trackPath);
-      convertToLink(el, htmlPath);
+      if (trackPath) {
+        convertToLink(el, obsidianToHtmlPath(trackPath));
+      }
     });
-  }
-
-  // Process entity paths
-  function processEntityPaths() {
-    document.querySelectorAll('span[data-entity-path]').forEach(function(el) {
+    
+    entitySpans.forEach(function(el) {
       const entityPath = el.getAttribute('data-entity-path');
       if (!entityPath) return;
       
       if (entityPath.includes('/')) {
-        const htmlPath = obsidianToHtmlPath(entityPath);
-        convertToLink(el, htmlPath);
+        convertToLink(el, obsidianToHtmlPath(entityPath));
       } else {
         const resolvedPath = findPageByFilename(entityPath);
         if (resolvedPath) {
@@ -94,34 +93,52 @@
     });
   }
 
-  // Process all Iron Vault links
-  async function processLinks() {
-    await loadSearchIndex();
-    processTrackPaths();
-    processEntityPaths();
-  }
+  // Expose globally so it can be called after navigation
+  window.processIronVaultLinks = processLinks;
 
-  // Check if URL changed (SPA navigation detection)
-  function checkForNavigation() {
-    if (location.href !== lastUrl) {
-      lastUrl = location.href;
-      // Wait for content to load after navigation
-      setTimeout(processLinks, 300);
+  // Watch for DOM changes using MutationObserver on body
+  let debounceTimer = null;
+  const observer = new MutationObserver(function(mutations) {
+    // Check if any added nodes contain our target elements
+    let hasTargets = false;
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === 1) { // Element node
+          if (node.querySelector && 
+              (node.querySelector('span[data-track-path], span[data-entity-path]') ||
+               node.matches && node.matches('span[data-track-path], span[data-entity-path]'))) {
+            hasTargets = true;
+            break;
+          }
+        }
+      }
+      if (hasTargets) break;
     }
+    
+    if (hasTargets) {
+      console.log('[IV Links] MutationObserver detected new content');
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(processLinks, 100);
+    }
+  });
+
+  // Start observing once DOM is ready
+  function init() {
+    console.log('[IV Links] Initializing');
+    // Process existing content
+    processLinks();
+    
+    // Watch for future changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    console.log('[IV Links] MutationObserver started on body');
   }
 
-  // Start polling for URL changes
-  function startPolling() {
-    if (pollInterval) return;
-    pollInterval = setInterval(checkForNavigation, 200);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
-
-  // Initialize
-  async function init() {
-    await processLinks();
-    startPolling();
-  }
-
-  // Run after a delay to ensure DOM is ready
-  setTimeout(init, 200);
 })();
