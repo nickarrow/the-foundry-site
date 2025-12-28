@@ -532,6 +532,21 @@ a[data-datasworn-id] {
   content: "Subtract -";
 }
 
+/* Hide index from sidebar navigation - it's the landing page, not a nav item */
+#file-explorer .nav-file:has(a[href="index.html"]) {
+  display: none;
+}
+
+/* Make the site title look clickable */
+#file-explorer .feature-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#file-explorer .feature-title a:hover {
+  opacity: 0.8;
+}
+
 /* Dice expression */
 .iron-vault-mechanics dl.dice-expr:before {
   content: "\1f3b2";

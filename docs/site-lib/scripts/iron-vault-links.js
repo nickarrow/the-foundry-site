@@ -108,8 +108,17 @@
     }
   });
 
+  function makeTitleHomeLink() {
+    const titleEl = document.querySelector('#file-explorer .feature-title');
+    if (titleEl && !titleEl.querySelector('a')) {
+      const text = titleEl.textContent;
+      titleEl.innerHTML = '<a href="index.html">' + text + '</a>';
+    }
+  }
+
   function init() {
     processLinks();
+    makeTitleHomeLink();
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
