@@ -107,3 +107,10 @@ a[data-datasworn-id] {
   text-decoration: none;
   color: inherit;
 }
+
+/* Disable Iron Vault move links - they point to plugin sidebar, won't work outside Obsidian */
+.iv-inline-move-name.iv-inline-link,
+.iv-inline-oracle-name.iv-inline-link {
+  pointer-events: none;
+  cursor: default;
+}
