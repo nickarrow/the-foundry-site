@@ -694,6 +694,15 @@ article.iron-vault-character section.assets .list-collapse-indicator {
   margin-inline-start: 0;
 }
 
+/* Fix dd elements inside asset cards - override other-plugins.css */
+.iron-vault-asset-card dd {
+  font-size: inherit !important;
+  font-family: inherit !important;
+  white-space: normal !important;
+  overflow-y: visible !important;
+  max-height: none !important;
+}
+
 /* Asset card header */
 .iron-vault-asset-card > header {
   position: relative;
@@ -952,4 +961,217 @@ article.iron-vault-character section.assets .list-collapse-indicator {
 .iron-vault-asset-card input[type=number]::-webkit-inner-spin-button {
   appearance: auto;
   -webkit-appearance: auto;
+}
+
+/* Fix controls list inside asset cards */
+.iron-vault-asset-card .controls-section .controls {
+  list-style: none !important;
+  padding: 0 0.5em !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  font-size: 0.8em !important;
+  text-transform: uppercase !important;
+  gap: 0.5em !important;
+}
+
+.iron-vault-asset-card .controls-section .controls > li {
+  margin-inline-start: 0 !important;
+}
+
+.iron-vault-asset-card .controls-section .controls dt {
+  display: none !important;
+}
+
+/* Condition meter - the integrity/health bar */
+.iron-vault-asset-card .condition-meter {
+  padding: 0.2em !important;
+  width: 100% !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter {
+  border: 1px solid var(--interactive-normal) !important;
+  border-radius: 8px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  margin-inline-start: 0 !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li:last-child {
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li > span {
+  font-weight: var(--font-semibold) !important;
+  padding: 0 0.4em !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li:has(> label > input[type=radio]) {
+  flex-grow: 1 !important;
+  background-color: var(--interactive-normal) !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li:has(> label > input[type=radio]):hover {
+  background-color: var(--interactive-hover) !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li:has(> label > input[type=radio]):not(:last-child) {
+  border-right: 2px solid var(--background-primary) !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li:has(> label > input[type=radio]:checked) {
+  background-color: var(--interactive-accent) !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li > label {
+  flex-grow: 1 !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  cursor: pointer !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li > label > span {
+  height: 1.6em !important;
+  flex-grow: 1 !important;
+  font-weight: var(--font-bold) !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  line-height: 1.6em !important;
+}
+
+.iron-vault-asset-card .condition-meter > .meter > li > label > span::before {
+  content: "+" !important;
+  font-weight: var(--font-bold) !important;
+}
+
+/* Hide the collapse indicators inside abilities list */
+.iron-vault-asset-card .abilities .list-collapse-indicator {
+  display: none !important;
+}
+
+/* Fix abilities list items */
+.iron-vault-asset-card .abilities > li {
+  margin-inline-start: 0 !important;
+}
+
+/* Controls inside abilities */
+.iron-vault-asset-card .abilities .controls {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.iron-vault-asset-card .abilities .controls > li {
+  margin-inline-start: 0 !important;
+}
+
+
+/* Battered/condition checkbox styling */
+.iron-vault-asset-card .condition-meter > .controls {
+  display: flex !important;
+  flex-flow: row wrap !important;
+  gap: 0.5em !important;
+  padding: 0.2em !important;
+}
+
+.iron-vault-asset-card .condition-meter > .controls > li {
+  margin-inline-start: 0 !important;
+}
+
+.iron-vault-asset-card .condition-meter .checkbox {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  gap: 0.3em !important;
+  font-size: 0.8em !important;
+  text-transform: uppercase !important;
+}
+
+.iron-vault-asset-card .condition-meter .checkbox span {
+  font-weight: var(--font-semibold) !important;
+}
+
+/* Fix the options section (NAME input for vehicles) */
+.iron-vault-asset-card .options label {
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  font-size: 0.7em !important;
+  color: var(--text-muted) !important;
+  text-transform: uppercase !important;
+}
+
+.iron-vault-asset-card .options label span {
+  font-weight: var(--font-semibold) !important;
+}
+
+.iron-vault-asset-card .options label input {
+  font-size: 1.2em !important;
+  padding: 0.3em !important;
+  background-color: var(--background-secondary) !important;
+  border: 1px solid var(--background-modifier-border) !important;
+  border-radius: 4px !important;
+  color: var(--text-normal) !important;
+}
+
+
+/* Fix asset card height - remove any max-height that causes scrolling */
+.iron-vault-asset-card {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.iron-vault-asset-card > section {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.iron-vault-asset-card .abilities {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.iron-vault-asset-card .controls-section {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 0.4em !important;
+}
+
+/* Remove any empty space from controls lists */
+.iron-vault-asset-card .controls:empty {
+  display: none !important;
+}
+
+.iron-vault-asset-card .abilities .controls:empty {
+  display: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Compact the abilities list items */
+.iron-vault-asset-card .abilities > li {
+  padding: 0.2em 0 !important;
+}
+
+/* Fix any overflow on the asset card wrapper */
+.asset-card-wrapper {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+/* Ensure the controls-section doesn't have excessive padding */
+.iron-vault-asset-card > .controls-section {
+  padding: 0.2em 0.5em 0.5em 0.5em !important;
 }
