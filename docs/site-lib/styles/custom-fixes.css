@@ -81,6 +81,19 @@ pre, code, .el-pre, .markdown-preview-view pre {
   top: 0 !important;
 }
 
+/* DEBUG: Bright backgrounds to see where elements are rendering */
+#left-sidebar.is-collapsed .sidebar-topbar {
+  background-color: red !important;
+}
+
+#left-sidebar.is-collapsed .clickable-icon.sidebar-collapse-icon {
+  background-color: lime !important;
+}
+
+#left-sidebar.is-collapsed .clickable-icon.sidebar-collapse-icon svg {
+  stroke: yellow !important;
+}
+
 .markdown-preview-view p,
 .markdown-preview-view blockquote,
 .markdown-preview-view li,
