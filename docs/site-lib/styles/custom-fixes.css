@@ -70,18 +70,15 @@ pre, code, .el-pre, .markdown-preview-view pre {
   align-items: flex-start !important;
 }
 
-/* Fix left sidebar toggle icon position when collapsed */
-/* The sidebar-topbar is position:fixed but has no top value, causing it to float.
-   We need to explicitly set top:0 to anchor it to the top of the viewport. */
+/* Fix sidebar toggle icon position when collapsed */
+/* The sidebar-topbar is position:fixed but the exported CSS is missing top:0,
+   causing it to float at its natural document position. The right sidebar 
+   happens to work by accident due to HTML order, but left sidebar breaks.
+   We fix both for consistency and robustness. */
 
-#left-sidebar .sidebar-topbar {
+#left-sidebar .sidebar-topbar,
+#right-sidebar .sidebar-topbar {
   top: 0 !important;
-}
-
-#left-sidebar .sidebar-collapse-icon {
-  opacity: 1 !important;
-  visibility: visible !important;
-  z-index: 100 !important;
 }
 
 .markdown-preview-view p,
