@@ -70,23 +70,36 @@ pre, code, .el-pre, .markdown-preview-view pre {
   align-items: flex-start !important;
 }
 
-/* Fix left sidebar toggle icon not visible on mobile */
+/* Fix left sidebar toggle icon position when collapsed */
+/* The sidebar-topbar is position:fixed, and the icon is position:absolute inside it.
+   When collapsed, the sidebar shrinks to 0 width but the topbar should remain visible.
+   The issue is the topbar needs to stay visible and positioned at top-left. */
+
+#left-sidebar.is-collapsed {
+  overflow: visible !important;
+}
+
+#left-sidebar.is-collapsed .sidebar-topbar {
+  overflow: visible !important;
+  width: calc(2.3em + var(--sidebar-margin, 12px) * 2) !important;
+  height: calc(2.3em + 2 * var(--sidebar-margin, 12px)) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
 #left-sidebar .sidebar-collapse-icon {
   opacity: 1 !important;
   visibility: visible !important;
   z-index: 100 !important;
 }
 
-#left-sidebar.is-collapsed .sidebar-topbar {
-  overflow: visible !important;
-}
-
-/* Ensure the icon is clickable and visible when sidebar is collapsed */
+/* Keep the icon positioned correctly within the topbar */
 #left-sidebar.is-collapsed .sidebar-collapse-icon {
-  position: fixed !important;
-  left: var(--sidebar-margin, 12px) !important;
-  right: auto !important;
+  position: absolute !important;
   top: var(--sidebar-margin, 12px) !important;
+  right: var(--sidebar-margin, 12px) !important;
+  left: auto !important;
   bottom: auto !important;
 }
 
