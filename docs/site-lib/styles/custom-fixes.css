@@ -3,6 +3,11 @@
   display: none;
 }
 
+/* Hide the horizontal line/data-bar at the top of each page */
+.header .data-bar {
+  display: none;
+}
+
 /* Fix code blocks being centered */
 pre, code, .el-pre, .markdown-preview-view pre {
   text-align: left !important;
