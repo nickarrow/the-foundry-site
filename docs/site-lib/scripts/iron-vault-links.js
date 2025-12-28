@@ -116,9 +116,24 @@
     }
   }
 
+  // Watch for file-explorer to be inserted (it loads via include after page load)
+  const titleObserver = new MutationObserver(function(mutations) {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeType === 1) {
+          if (node.id === 'file-explorer' || (node.querySelector && node.querySelector('#file-explorer'))) {
+            makeTitleHomeLink();
+            return;
+          }
+        }
+      }
+    }
+  });
+
   function init() {
     processLinks();
     makeTitleHomeLink();
+    titleObserver.observe(document.body, { childList: true, subtree: true });
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
