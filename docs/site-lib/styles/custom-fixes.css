@@ -100,3 +100,10 @@ pre, code, .el-pre, .markdown-preview-view pre {
 .markdown-preview-view h6 {
   text-align: left;
 }
+
+/* Disable Iron Vault datasworn links - they don't work outside Obsidian */
+a[data-datasworn-id] {
+  pointer-events: none;
+  text-decoration: none;
+  color: inherit;
+}
