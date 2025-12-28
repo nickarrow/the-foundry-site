@@ -140,7 +140,7 @@ In the obsidian-webpage-export plugin settings:
 ### Entity/track links don't work
 - Check browser console for errors
 - Verify `iron-vault-links.js` is being loaded
-- The script runs with a 200ms delay after page load
+- The script uses a MutationObserver to handle SPA navigation, so links should work both on initial load and after navigating between pages
 
 ### Styles not applying
 - Check Network tab in dev tools - are the CSS files loading (status 200)?

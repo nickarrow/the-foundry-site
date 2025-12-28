@@ -1,27 +1,23 @@
 /**
  * Iron Vault Link Fixer
  * Converts Iron Vault track/entity path spans to working links on the exported site.
+ * Uses MutationObserver to handle SPA navigation.
  */
 (function() {
-  console.log('[IV Links] Script loaded');
-  
   let searchIndex = null;
 
-  // Load the search index to resolve entity paths
   async function loadSearchIndex() {
     if (searchIndex) return;
     try {
       const response = await fetch('site-lib/search-index.json');
       if (response.ok) {
         searchIndex = await response.json();
-        console.log('[IV Links] Search index loaded');
       }
     } catch (e) {
-      console.log('[IV Links] Failed to load search index', e);
+      // Silently fail
     }
   }
 
-  // Convert Obsidian path to HTML path
   function obsidianToHtmlPath(obsidianPath) {
     return obsidianPath
       .toLowerCase()
@@ -30,7 +26,6 @@
       .replace(/'/g, '');
   }
 
-  // Find a page in the search index by filename
   function findPageByFilename(filename) {
     if (!searchIndex || !searchIndex.documentIds) return null;
     
@@ -46,7 +41,6 @@
     return null;
   }
 
-  // Convert a span to a link
   function convertToLink(el, href) {
     const link = document.createElement('a');
     link.className = el.className;
@@ -62,23 +56,17 @@
     el.parentNode.replaceChild(link, el);
   }
 
-  // Process all Iron Vault links
   async function processLinks() {
     await loadSearchIndex();
     
-    const trackSpans = document.querySelectorAll('span[data-track-path]');
-    const entitySpans = document.querySelectorAll('span[data-entity-path]');
-    
-    console.log('[IV Links] Processing - found', trackSpans.length, 'track spans,', entitySpans.length, 'entity spans');
-    
-    trackSpans.forEach(function(el) {
+    document.querySelectorAll('span[data-track-path]').forEach(function(el) {
       const trackPath = el.getAttribute('data-track-path');
       if (trackPath) {
         convertToLink(el, obsidianToHtmlPath(trackPath));
       }
     });
     
-    entitySpans.forEach(function(el) {
+    document.querySelectorAll('span[data-entity-path]').forEach(function(el) {
       const entityPath = el.getAttribute('data-entity-path');
       if (!entityPath) return;
       
@@ -93,17 +81,16 @@
     });
   }
 
-  // Expose globally so it can be called after navigation
+  // Expose globally for manual calls if needed
   window.processIronVaultLinks = processLinks;
 
-  // Watch for DOM changes using MutationObserver on body
+  // Watch for DOM changes (SPA navigation)
   let debounceTimer = null;
   const observer = new MutationObserver(function(mutations) {
-    // Check if any added nodes contain our target elements
     let hasTargets = false;
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
-        if (node.nodeType === 1) { // Element node
+        if (node.nodeType === 1) {
           if (node.querySelector && 
               (node.querySelector('span[data-track-path], span[data-entity-path]') ||
                node.matches && node.matches('span[data-track-path], span[data-entity-path]'))) {
@@ -116,24 +103,14 @@
     }
     
     if (hasTargets) {
-      console.log('[IV Links] MutationObserver detected new content');
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(processLinks, 100);
     }
   });
 
-  // Start observing once DOM is ready
   function init() {
-    console.log('[IV Links] Initializing');
-    // Process existing content
     processLinks();
-    
-    // Watch for future changes
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-    console.log('[IV Links] MutationObserver started on body');
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {
