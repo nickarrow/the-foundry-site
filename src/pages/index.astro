@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getAllContentFiles, getContentFile } from '../lib/content';
+import { processMarkdown } from '../lib/markdown';
+
+const allFiles = getAllContentFiles();
+const fileData = getContentFile('1.-welcome-to-the-foundry');
+
+if (!fileData) {
+  return Astro.redirect('/404');
+}
+
+const { content, title } = fileData;
+const baseUrl = import.meta.env.BASE_URL;
+const htmlContent = await processMarkdown(content, allFiles, baseUrl);
+---
+
+<Layout title={title}>
+  <Sidebar />
+  
+  <main class="content">
+    <article class="page">
+      <div class="prose" set:html={htmlContent} />
+    </article>
+  </main>
+</Layout>

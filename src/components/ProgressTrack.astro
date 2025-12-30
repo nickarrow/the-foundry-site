@@ -1,0 +1,127 @@
+---
+interface Props {
+  name: string;
+  rank: string;
+  progress: number;
+  trackType?: string;
+  complete?: boolean;
+}
+
+const { name, rank, progress, trackType = 'Vow', complete = false } = Astro.props;
+
+// Progress is stored as ticks (0-40), convert to boxes (0-10)
+const ticks = progress;
+const fullBoxes = Math.floor(ticks / 4);
+const remainingTicks = ticks % 4;
+
+// Rank determines ticks per mark
+const rankTicks: Record<string, number> = {
+  troublesome: 12,
+  dangerous: 8,
+  formidable: 4,
+  extreme: 2,
+  epic: 1
+};
+
+const ticksPerMark = rankTicks[rank.toLowerCase()] || 4;
+---
+
+<div class="progress-track" data-rank={rank} data-complete={complete}>
+  <div class="track-header">
+    <span class="track-type">{trackType}</span>
+    <span class="track-rank">{rank}</span>
+  </div>
+  <div class="track-name">{name}</div>
+  <div class="track-boxes">
+    {Array.from({ length: 10 }, (_, i) => {
+      const boxTicks = i < fullBoxes ? 4 : (i === fullBoxes ? remainingTicks : 0);
+      return (
+        <div class={`track-box ${boxTicks === 4 ? 'full' : ''}`} data-ticks={boxTicks}>
+          {boxTicks > 0 && boxTicks < 4 && (
+            <div class="tick-marks">
+              {Array.from({ length: boxTicks }, (_, t) => (
+                <span class="tick" />
+              ))}
+            </div>
+          )}
+          {boxTicks === 4 && <span class="box-full">✓</span>}
+        </div>
+      );
+    })}
+  </div>
+  <div class="track-progress">{fullBoxes}/10 ({ticks} ticks)</div>
+</div>
+
+<style>
+  .progress-track {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .track-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  
+  .track-name {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  
+  .track-boxes {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .track-box {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+  }
+  
+  .track-box.full {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+  }
+  
+  .box-full {
+    color: var(--bg-primary);
+    font-weight: bold;
+  }
+  
+  .tick-marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 4px;
+  }
+  
+  .tick {
+    width: 6px;
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 1px;
+  }
+  
+  .track-progress {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+  
+  [data-complete="true"] .track-name {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+</style>

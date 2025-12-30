@@ -1,0 +1,107 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | The Foundry</title>
+    <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}/favicon.png`} />
+    <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/main.css`} />
+    <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/iron-vault.css`} />
+  </head>
+  <body>
+    <div class="app">
+      <slot />
+    </div>
+    <script>
+      // Mobile sidebar toggle
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        
+        toggle?.addEventListener('click', () => {
+          sidebar?.classList.toggle('open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+          if (window.innerWidth <= 768) {
+            const target = e.target as HTMLElement;
+            if (!sidebar?.contains(target) && !toggle?.contains(target)) {
+              sidebar?.classList.remove('open');
+            }
+          }
+        });
+        
+        // Restore folder states from localStorage
+        const savedStates = JSON.parse(localStorage.getItem('sidebarFolderStates') || '{}');
+        document.querySelectorAll('.nav-folder').forEach((folder, index) => {
+          const title = folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
+          if (savedStates[title] === 'expanded') {
+            folder.classList.remove('collapsed');
+          } else if (savedStates[title] === 'collapsed') {
+            folder.classList.add('collapsed');
+          }
+          // If no saved state, keep the default (collapsed)
+        });
+        
+        // Save folder state on toggle
+        function saveFolderStates() {
+          const states: Record<string, string> = {};
+          document.querySelectorAll('.nav-folder').forEach((folder, index) => {
+            const title = folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
+            states[title] = folder.classList.contains('collapsed') ? 'collapsed' : 'expanded';
+          });
+          localStorage.setItem('sidebarFolderStates', JSON.stringify(states));
+        }
+        
+        // Collapsible nav folders
+        document.querySelectorAll('.nav-folder > .nav-folder-title').forEach(title => {
+          title.addEventListener('click', () => {
+            title.parentElement?.classList.toggle('collapsed');
+            saveFolderStates();
+          });
+        });
+        
+        // Expand all button
+        document.querySelector('.expand-all')?.addEventListener('click', () => {
+          document.querySelectorAll('.nav-folder').forEach(folder => {
+            folder.classList.remove('collapsed');
+          });
+          saveFolderStates();
+        });
+        
+        // Collapse all button
+        document.querySelector('.collapse-all')?.addEventListener('click', () => {
+          document.querySelectorAll('.nav-folder').forEach(folder => {
+            folder.classList.add('collapsed');
+          });
+          saveFolderStates();
+        });
+        
+        // Auto-expand folders containing the active page
+        const activeItem = document.querySelector('.nav-item.active');
+        if (activeItem) {
+          let parent = activeItem.parentElement;
+          while (parent) {
+            if (parent.classList.contains('nav-folder')) {
+              parent.classList.remove('collapsed');
+            }
+            parent = parent.parentElement;
+          }
+          saveFolderStates();
+          
+          // Scroll active item into view
+          activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
+        }
+      });
+    </script>
+  </body>
+</html>

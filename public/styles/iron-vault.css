@@ -1,0 +1,450 @@
+/* Iron Vault Mechanics Styles */
+/* Inline and block mechanics rendering */
+
+:root {
+  --iv-bg: #2d2d2d;
+  --iv-border: #404040;
+  --iv-strong-hit: #22c55e;
+  --iv-weak-hit: #f59e0b;
+  --iv-miss: #ef4444;
+  --iv-vs1: #06b6d4;
+  --iv-vs2: #06b6d4;
+  --iv-bracket: #888;
+  --iv-link: #a78bfa;
+}
+
+/* ==================== */
+/* INLINE MECHANICS     */
+/* ==================== */
+
+.iv-inline {
+  display: inline;
+  font-family: var(--font-sans);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.iv-bracket {
+  color: var(--iv-bracket);
+  font-weight: bold;
+  margin-right: 0.25em;
+}
+
+/* Move inline */
+.iv-move .iv-move-name {
+  font-weight: 600;
+  color: var(--link-color);
+}
+
+.iv-move .iv-stat {
+  color: var(--text-muted);
+  margin: 0 0.25em;
+}
+
+.iv-move .outcome-icons {
+  margin: 0 0.25em;
+}
+
+.iv-move .outcome-icons .hex {
+  font-size: 0.8em;
+}
+
+.iv-move .outcome-icons .hex.hit {
+  color: var(--iv-strong-hit);
+}
+
+.iv-move .outcome-icons .hex.miss {
+  color: var(--iv-miss);
+}
+
+.iv-move .iv-score {
+  font-weight: 600;
+  margin: 0 0.25em;
+}
+
+.iv-move.strong-hit .iv-score { color: var(--iv-strong-hit); }
+.iv-move.weak-hit .iv-score { color: var(--iv-weak-hit); }
+.iv-move.miss .iv-score { color: var(--iv-miss); }
+
+.iv-move .iv-vs {
+  color: var(--text-muted);
+  margin: 0 0.25em;
+}
+
+.iv-move .iv-challenge {
+  font-weight: 600;
+}
+
+.iv-move .iv-challenge.vs1 { color: var(--iv-vs1); }
+.iv-move .iv-challenge.vs2 { color: var(--iv-vs2); }
+
+.iv-move .iv-sep {
+  color: var(--text-muted);
+  margin: 0 0.15em;
+}
+
+.iv-move .iv-match {
+  color: var(--iv-weak-hit);
+  font-size: 0.75em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 0.5em;
+}
+
+/* Oracle inline */
+.iv-oracle .iv-oracle-icon {
+  margin-right: 0.25em;
+}
+
+.iv-oracle .iv-oracle-name {
+  color: var(--link-color);
+  font-weight: 500;
+}
+
+.iv-oracle .iv-roll {
+  color: var(--text-muted);
+  margin: 0 0.25em;
+}
+
+.iv-oracle .iv-result {
+  color: var(--iv-strong-hit);
+}
+
+/* Meter inline */
+.iv-meter .iv-meter-name {
+  font-weight: 600;
+  color: var(--link-color);
+}
+
+.iv-meter .iv-from,
+.iv-meter .iv-to {
+  font-weight: 600;
+}
+
+.iv-meter .iv-arrow {
+  color: var(--text-muted);
+  margin: 0 0.15em;
+}
+
+.iv-meter.positive .iv-to { color: var(--iv-strong-hit); }
+.iv-meter.negative .iv-to { color: var(--iv-miss); }
+
+/* Initiative inline */
+.iv-initiative .iv-init-label {
+  font-weight: 600;
+  color: var(--link-color);
+  margin-right: 0.25em;
+}
+
+.iv-initiative.in-control .iv-init-state { color: var(--iv-strong-hit); }
+.iv-initiative.bad-spot .iv-init-state { color: var(--iv-miss); }
+
+/* Track inline */
+.iv-track-create .iv-track-icon,
+.iv-track-advance .iv-track-icon {
+  margin-right: 0.25em;
+}
+
+.iv-track-create .iv-track-link,
+.iv-track-advance .iv-track-link,
+.iv-progress-roll .iv-track-link {
+  color: var(--iv-link);
+  text-decoration: none;
+}
+
+.iv-track-create .iv-track-link:hover,
+.iv-track-advance .iv-track-link:hover,
+.iv-progress-roll .iv-track-link:hover {
+  text-decoration: underline;
+}
+
+.iv-track-create .iv-status {
+  color: var(--iv-strong-hit);
+  margin-left: 0.25em;
+}
+
+.iv-track-advance .iv-steps {
+  color: var(--iv-strong-hit);
+  font-weight: 600;
+  margin-left: 0.25em;
+}
+
+.iv-track-advance .iv-progress {
+  color: var(--text-muted);
+  margin-left: 0.25em;
+}
+
+/* Progress roll inline */
+.iv-progress-roll .iv-score {
+  font-weight: 600;
+  margin: 0 0.25em;
+}
+
+.iv-progress-roll.strong-hit .iv-score { color: var(--iv-strong-hit); }
+.iv-progress-roll.weak-hit .iv-score { color: var(--iv-weak-hit); }
+.iv-progress-roll.miss .iv-score { color: var(--iv-miss); }
+
+.iv-progress-roll .iv-vs { color: var(--text-muted); margin: 0 0.25em; }
+.iv-progress-roll .iv-challenge.vs1 { color: var(--iv-vs1); font-weight: 600; }
+.iv-progress-roll .iv-challenge.vs2 { color: var(--iv-vs2); font-weight: 600; }
+.iv-progress-roll .iv-sep { color: var(--text-muted); margin: 0 0.15em; }
+
+/* No-roll move */
+.iv-noroll .iv-move-name {
+  color: var(--link-color);
+  font-weight: 500;
+}
+
+/* Entity create */
+.iv-entity-create .iv-entity-type {
+  color: var(--text-muted);
+  margin-right: 0.25em;
+}
+
+.iv-entity-create .iv-entity-link {
+  color: var(--iv-link);
+  text-decoration: none;
+}
+
+.iv-entity-create .iv-entity-link:hover {
+  text-decoration: underline;
+}
+
+/* ==================== */
+/* BLOCK MECHANICS      */
+/* ==================== */
+
+.iron-vault-mechanics {
+  background: var(--iv-bg);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+  max-width: 460px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Move block */
+.iron-vault-mechanics details.move {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border: 1px solid var(--iv-border);
+  overflow: hidden;
+}
+
+.iron-vault-mechanics details.move summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.iron-vault-mechanics details.move summary::-webkit-details-marker {
+  display: none;
+}
+
+.iron-vault-mechanics details.move summary .move-name {
+  color: var(--link-color);
+}
+
+.iron-vault-mechanics details.move summary .outcome-icons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.iron-vault-mechanics details.move summary .outcome-icons .hex {
+  font-size: 1.25rem;
+}
+
+.iron-vault-mechanics details.move summary .outcome-icons .hex.hit {
+  color: var(--iv-strong-hit);
+}
+
+.iron-vault-mechanics details.move summary .outcome-icons .hex.miss {
+  color: var(--iv-miss);
+}
+
+.iron-vault-mechanics details.move[open] summary {
+  border-bottom: 1px dashed var(--iv-border);
+}
+
+/* Roll display */
+.iron-vault-mechanics dl.roll {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.iron-vault-mechanics dl.roll dt {
+  display: none;
+}
+
+.iron-vault-mechanics dl.roll dd {
+  margin: 0;
+  padding: 0;
+}
+
+.iron-vault-mechanics dl.roll .dice-icon {
+  margin-right: 0.5rem;
+}
+
+.iron-vault-mechanics dl.roll .action-die {
+  font-weight: 600;
+}
+
+.iron-vault-mechanics dl.roll .stat::before {
+  content: '+';
+}
+
+.iron-vault-mechanics dl.roll .stat-name {
+  color: var(--text-muted);
+}
+
+.iron-vault-mechanics dl.roll .adds::before {
+  content: '+';
+}
+
+.iron-vault-mechanics dl.roll .score {
+  font-weight: 600;
+}
+
+.iron-vault-mechanics dl.roll.strong-hit .score { color: var(--iv-strong-hit); }
+.iron-vault-mechanics dl.roll.weak-hit .score { color: var(--iv-weak-hit); }
+.iron-vault-mechanics dl.roll.miss .score { color: var(--iv-miss); }
+
+.iron-vault-mechanics dl.roll .challenge-die {
+  font-weight: 600;
+}
+
+.iron-vault-mechanics dl.roll .challenge-die.vs1 { color: var(--iv-vs1); }
+.iron-vault-mechanics dl.roll .challenge-die.vs2 { color: var(--iv-vs2); }
+
+.iron-vault-mechanics dl.roll .challenge-die.vs1::before {
+  content: 'vs ';
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
+.iron-vault-mechanics dl.roll .challenge-die.vs2::before {
+  content: '| ';
+  color: var(--text-muted);
+  font-weight: normal;
+}
+
+/* Oracle block */
+.iron-vault-mechanics dl.oracle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.iron-vault-mechanics dl.oracle dt {
+  display: none;
+}
+
+.iron-vault-mechanics dl.oracle dd {
+  margin: 0;
+}
+
+.iron-vault-mechanics dl.oracle .oracle-icon {
+  margin-right: 0.25rem;
+}
+
+.iron-vault-mechanics dl.oracle .name {
+  color: var(--link-color);
+}
+
+.iron-vault-mechanics dl.oracle .roll::before {
+  content: '(= ';
+  color: var(--text-muted);
+}
+
+.iron-vault-mechanics dl.oracle .roll::after {
+  content: ')';
+  color: var(--text-muted);
+}
+
+.iron-vault-mechanics dl.oracle .result::before,
+.iron-vault-mechanics dl.oracle .result::after {
+  content: '"';
+  color: var(--text-muted);
+}
+
+.iron-vault-mechanics dl.oracle .result {
+  color: var(--iv-strong-hit);
+}
+
+/* Oracle group */
+.iron-vault-mechanics .oracle-group {
+  margin: 0.5rem 0;
+}
+
+.iron-vault-mechanics .oracle-group .group-name {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.iron-vault-mechanics .oracle-group .group-name::before {
+  content: '🔮🔁 ';
+}
+
+.iron-vault-mechanics .oracle-group blockquote {
+  margin: 0;
+  padding-left: 1rem;
+  border-left: 2px dashed var(--iv-border);
+}
+
+/* Track status */
+.iron-vault-mechanics dl.track-status {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.5rem 0;
+}
+
+.iron-vault-mechanics dl.track-status dt {
+  display: none;
+}
+
+.iron-vault-mechanics dl.track-status dd {
+  margin: 0;
+}
+
+.iron-vault-mechanics dl.track-status .track-name::before {
+  content: '☐ ';
+}
+
+.iron-vault-mechanics dl.track-status .track-name a {
+  color: var(--iv-link);
+  text-decoration: none;
+}
+
+.iron-vault-mechanics dl.track-status .track-name a:hover {
+  text-decoration: underline;
+}
+
+.iron-vault-mechanics dl.track-status .track-status[data-value="added"] {
+  color: var(--iv-strong-hit);
+}
+
+.iron-vault-mechanics dl.track-status .track-status[data-value="added"]::before {
+  content: ' - ';
+  color: var(--text-muted);
+}
+
+/* Parse error */
+.iv-parse-error {
+  color: var(--iv-miss);
+  font-style: italic;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+}

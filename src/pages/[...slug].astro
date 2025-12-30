@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ProgressTrack from '../components/ProgressTrack.astro';
+import CharacterMeters from '../components/CharacterMeters.astro';
+import { getAllContentFiles, getContentFile } from '../lib/content';
+import { processMarkdown } from '../lib/markdown';
+
+export async function getStaticPaths() {
+  const files = getAllContentFiles();
+  
+  return files.map(file => ({
+    params: { slug: file.slug || undefined },
+    props: { file }
+  }));
+}
+
+const { slug } = Astro.params;
+const allFiles = getAllContentFiles();
+
+// Handle homepage
+const actualSlug = slug || '1.-welcome-to-the-foundry';
+const fileData = getContentFile(actualSlug);
+
+if (!fileData) {
+  return Astro.redirect('/404');
+}
+
+const { frontmatter, content, title } = fileData;
+const baseUrl = import.meta.env.BASE_URL;
+const htmlContent = await processMarkdown(content, allFiles, baseUrl);
+
+// Determine content type from frontmatter
+const ironVaultKind = frontmatter['iron-vault-kind'];
+const isCharacter = ironVaultKind === 'character';
+const isProgressTrack = ironVaultKind === 'progress';
+const isCampaign = ironVaultKind === 'campaign';
+
+// Character data
+const characterData = isCharacter ? {
+  momentum: frontmatter.momentum || 0,
+  health: frontmatter.health || 5,
+  spirit: frontmatter.spirit || 5,
+  supply: frontmatter.supply || 5,
+  edge: frontmatter.edge || 0,
+  heart: frontmatter.heart || 0,
+  iron: frontmatter.iron || 0,
+  shadow: frontmatter.shadow || 0,
+  wits: frontmatter.wits || 0,
+  assets: frontmatter.assets || [],
+} : null;
+
+// Progress track data
+const trackData = isProgressTrack ? {
+  name: frontmatter.name || title,
+  rank: frontmatter.rank || 'dangerous',
+  progress: frontmatter.progress || 0,
+  trackType: frontmatter['track-type'] || 'Vow',
+  complete: frontmatter.tags?.includes('complete') || false,
+} : null;
+---
+
+<Layout title={title}>
+  <Sidebar />
+  
+  <main class="content">
+    <Breadcrumbs slug={actualSlug} />
+    
+    <article class="page">
+      {isCharacter && characterData && (
+        <CharacterMeters {...characterData} />
+      )}
+      
+      {isProgressTrack && trackData && (
+        <ProgressTrack {...trackData} />
+      )}
+      
+      <div class="prose" set:html={htmlContent} />
+    </article>
+  </main>
+</Layout>

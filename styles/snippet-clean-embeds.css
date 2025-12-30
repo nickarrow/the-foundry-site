@@ -1,0 +1,12 @@
+.internal-embed .markdown-embed-title {
+	display: none;
+}
+
+.internal-embed {
+	border: none;
+	padding: 0px;
+}
+
+.internal-embed .markdown-embed-link {
+	display: none;
+}
