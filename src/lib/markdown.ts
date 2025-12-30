@@ -244,6 +244,11 @@ function remarkIronVault(options: { allFiles: ContentFile[]; baseUrl: string }) 
       
       // Handle code blocks
       if (node.type === 'code') {
+        // Trim trailing whitespace from all code blocks
+        if (node.value) {
+          node.value = node.value.trimEnd();
+        }
+        
         if (node.lang === 'iron-vault-mechanics') {
           node.type = 'html';
           node.value = parseIronVaultBlock(node.value, options.baseUrl);
