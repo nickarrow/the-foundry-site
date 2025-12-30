@@ -684,3 +684,42 @@ html, body {
 .iron-vault-character-special-tracks-placeholder::before {
   content: 'Legacy tracks not yet implemented';
 }
+
+
+/* Embedded content (transclusion) */
+.embedded-content {
+  margin: 1rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.embedded-header {
+  padding: 0.5rem 1rem;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.embedded-header a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.embedded-header a:hover {
+  text-decoration: underline;
+}
+
+.embedded-body {
+  padding: 1rem;
+  background: var(--bg-secondary);
+}
+
+.embedded-body > *:first-child {
+  margin-top: 0;
+}
+
+.embedded-body > *:last-child {
+  margin-bottom: 0;
+}

@@ -81,6 +81,26 @@ export function getFileByPath(filePath: string): { frontmatter: Record<string, a
   return { frontmatter, content };
 }
 
+export function getFileContentByName(name: string): { content: string; title: string; path: string } | null {
+  const files = getAllContentFiles();
+  const lookupKey = name.toLowerCase().trim();
+  
+  // Try to find by title or filename
+  const file = files.find(f => {
+    const title = f.title.toLowerCase();
+    const filename = f.path.split(/[/\\]/).pop()?.replace(/\.md$/, '').toLowerCase() || '';
+    return title === lookupKey || filename === lookupKey;
+  });
+  
+  if (!file) return null;
+  
+  const fullPath = path.join(CONTENT_DIR, file.path);
+  const raw = fs.readFileSync(fullPath, 'utf-8');
+  const { content } = matter(raw);
+  
+  return { content, title: file.title, path: file.path };
+}
+
 function extractTitle(content: string, filename: string): string {
   // Use filename without extension as the title
   // This preserves numbering like "2. Getting Started" from filenames

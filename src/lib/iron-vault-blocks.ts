@@ -168,6 +168,8 @@ function pathToSlug(path: string): string {
 
 function escapeHtml(text: string): string {
   return text
+    // First unescape escaped forward slashes from Iron Vault syntax
+    .replace(/\\\//g, '/')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')

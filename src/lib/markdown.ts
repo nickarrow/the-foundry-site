@@ -12,6 +12,7 @@ import { visit } from 'unist-util-visit';
 import { parseInlineMechanic, pathToSlug } from './iron-vault-inline';
 import { parseIronVaultBlock } from './iron-vault-blocks';
 import { parseDataviewQuery, executeDataviewQuery, renderDataviewResult, type ContentFile } from './dataview';
+import { getFileContentByName } from './content';
 
 export async function processMarkdown(content: string, allFiles: ContentFile[], baseUrl: string = ''): Promise<string> {
   // Normalize line endings first (Windows CRLF to LF)
@@ -60,12 +61,41 @@ export async function processMarkdown(content: string, allFiles: ContentFile[], 
   
   // Handle content embeds ![[Note Name]] (non-images)
   // MUST be processed before wikilinks
+  // Track embedded files to prevent infinite recursion
+  const embeddedFiles = new Set<string>();
+  
   processed = processed.replace(/!\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, target, display) => {
-    // Try to find the file
+    // Try to find and inline the file content
     const lookupKey = target.toLowerCase().trim();
+    
+    // Prevent infinite recursion
+    if (embeddedFiles.has(lookupKey)) {
+      const file = filesByName.get(lookupKey);
+      const slug = file ? file.slug : pathToSlug(target + '.md');
+      return `<div class="embed-link"><a href="${baseUrl}/${slug}">${display || target}</a></div>`;
+    }
+    
+    const embeddedFile = getFileContentByName(target);
+    if (embeddedFile) {
+      embeddedFiles.add(lookupKey);
+      const file = filesByName.get(lookupKey);
+      const slug = file ? file.slug : pathToSlug(target + '.md');
+      
+      // Return the embedded content wrapped in a styled container
+      // The content will be processed by the markdown pipeline
+      return `<div class="embedded-content">
+<div class="embedded-header"><a href="${baseUrl}/${slug}">${display || embeddedFile.title}</a></div>
+<div class="embedded-body">
+
+${embeddedFile.content}
+
+</div>
+</div>`;
+    }
+    
+    // Fallback to link if file not found
     const file = filesByName.get(lookupKey);
     const slug = file ? file.slug : pathToSlug(target + '.md');
-    
     return `<div class="embed-link"><a href="${baseUrl}/${slug}">${display || target}</a></div>`;
   });
   
