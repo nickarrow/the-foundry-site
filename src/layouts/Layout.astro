@@ -101,6 +101,24 @@ const { title } = Astro.props;
           // Scroll active item into view
           activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
         }
+        
+        // Collapsible callouts - toggle on title click
+        document.querySelectorAll('.callout.is-collapsible .callout-title').forEach(title => {
+          title.addEventListener('click', () => {
+            const callout = title.closest('.callout');
+            const content = callout?.querySelector('.callout-content') as HTMLElement;
+            const fold = callout?.querySelector('.callout-fold');
+            
+            if (callout && content) {
+              const isCollapsed = callout.classList.toggle('is-collapsed');
+              content.style.display = isCollapsed ? 'none' : 'block';
+              fold?.classList.toggle('is-collapsed', isCollapsed);
+            }
+          });
+          
+          // Make title look clickable
+          (title as HTMLElement).style.cursor = 'pointer';
+        });
       });
     </script>
   </body>

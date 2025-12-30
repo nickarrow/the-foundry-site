@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import ProgressTrack from '../components/ProgressTrack.astro';
-import CharacterMeters from '../components/CharacterMeters.astro';
 import { getAllContentFiles, getContentFile } from '../lib/content';
 import { processMarkdown } from '../lib/markdown';
 
@@ -29,27 +28,69 @@ if (!fileData) {
 
 const { frontmatter, content, title } = fileData;
 const baseUrl = import.meta.env.BASE_URL;
-const htmlContent = await processMarkdown(content, allFiles, baseUrl);
+let htmlContent = await processMarkdown(content, allFiles, baseUrl);
 
 // Determine content type from frontmatter
 const ironVaultKind = frontmatter['iron-vault-kind'];
 const isCharacter = ironVaultKind === 'character';
 const isProgressTrack = ironVaultKind === 'progress';
-const isCampaign = ironVaultKind === 'campaign';
 
-// Character data
-const characterData = isCharacter ? {
-  momentum: frontmatter.momentum || 0,
-  health: frontmatter.health || 5,
-  spirit: frontmatter.spirit || 5,
-  supply: frontmatter.supply || 5,
-  edge: frontmatter.edge || 0,
-  heart: frontmatter.heart || 0,
-  iron: frontmatter.iron || 0,
-  shadow: frontmatter.shadow || 0,
-  wits: frontmatter.wits || 0,
-  assets: frontmatter.assets || [],
-} : null;
+// Generate character meters HTML and replace placeholder
+if (isCharacter) {
+  const stats = [
+    { name: 'edge', value: frontmatter.edge || 0 },
+    { name: 'heart', value: frontmatter.heart || 0 },
+    { name: 'iron', value: frontmatter.iron || 0 },
+    { name: 'shadow', value: frontmatter.shadow || 0 },
+    { name: 'wits', value: frontmatter.wits || 0 },
+  ];
+  
+  const meters = [
+    { name: 'health', value: frontmatter.health || 5 },
+    { name: 'spirit', value: frontmatter.spirit || 5 },
+    { name: 'supply', value: frontmatter.supply || 5 },
+  ];
+  
+  const momentum = frontmatter.momentum || 0;
+  
+  const statsHtml = stats.map(s => `
+    <li>
+      <dl>
+        <dt data-value="${s.name}">${s.name}</dt>
+        <dd><input type="text" inputmode="numeric" value="${s.value}" readonly /></dd>
+      </dl>
+    </li>
+  `).join('');
+  
+  const metersHtml = meters.map(m => `
+    <li>
+      <dl>
+        <dt data-value="${m.name}">${m.name}</dt>
+        <dd data-value="${m.value}"><span>${m.value}</span></dd>
+      </dl>
+    </li>
+  `).join('');
+  
+  const characterMetersHtml = `
+    <article class="iron-vault-character">
+      <ul class="stats">${statsHtml}</ul>
+      <ul class="meters">
+        ${metersHtml}
+        <li class="momentum">
+          <dl>
+            <dt>momentum</dt>
+            <dd data-value="${momentum}"><span>${momentum}</span></dd>
+          </dl>
+        </li>
+      </ul>
+    </article>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-meters-placeholder"></div>',
+    characterMetersHtml
+  );
+}
 
 // Progress track data
 const trackData = isProgressTrack ? {
@@ -68,10 +109,6 @@ const trackData = isProgressTrack ? {
     <Breadcrumbs slug={actualSlug} />
     
     <article class="page">
-      {isCharacter && characterData && (
-        <CharacterMeters {...characterData} />
-      )}
-      
       {isProgressTrack && trackData && (
         <ProgressTrack {...trackData} />
       )}

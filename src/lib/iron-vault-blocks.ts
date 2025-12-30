@@ -12,7 +12,15 @@ export function parseIronVaultBlock(content: string, baseUrl: string = ''): stri
     const line = lines[i].trim();
     
     if (line.startsWith('move ')) {
-      results.push(parseMoveBlock(line));
+      // Collect all lines until closing brace (move blocks can span multiple lines)
+      const moveLines = [line];
+      let braceCount = (line.match(/{/g) || []).length - (line.match(/}/g) || []).length;
+      while (braceCount > 0 && i + 1 < lines.length) {
+        i++;
+        moveLines.push(lines[i]);
+        braceCount += (lines[i].match(/{/g) || []).length - (lines[i].match(/}/g) || []).length;
+      }
+      results.push(parseMoveBlock(moveLines.join(' ')));
     } else if (line.startsWith('oracle-group ')) {
       // Collect all lines until closing brace
       const groupLines = [line];
@@ -56,27 +64,17 @@ function parseMoveBlock(line: string): string {
   const score = action + statValue + adds;
   const outcome = getOutcome(score, vs1, vs2);
   const match = vs1 === vs2;
-  
-  // Build the outcome icons (hexagons)
-  let outcomeIcons = '';
-  if (outcome === 'strong-hit') {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex hit">⬡</span><span class="hex hit">⬡</span></span>';
-  } else if (outcome === 'weak-hit') {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex hit">⬡</span><span class="hex miss">⬢</span></span>';
-  } else {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex miss">⬢</span><span class="hex miss">⬢</span></span>';
-  }
 
+  // Note: CSS handles icons via ::before pseudo-elements, so we don't add them here
   return `<details class="move ${outcome}${match ? ' match' : ''}" open>
-    <summary><span class="move-name">${escapeHtml(name)}</span>${outcomeIcons}</summary>
+    <summary><span class="move-name">${escapeHtml(name)}</span></summary>
     <dl class="roll ${outcome}${match ? ' match' : ''}">
       <dt>Roll</dt>
-      <dd class="dice-icon">🎲</dd>
       <dd class="action-die">${action}</dd>
-      <dd class="stat">+${statValue}</dd>
-      <dd class="stat-name">(${escapeHtml(stat)})</dd>
-      <dd class="adds">+${adds}</dd>
-      <dd class="score">= ${score}</dd>
+      <dd class="stat">${statValue}</dd>
+      <dd class="stat-name">${escapeHtml(stat)}</dd>
+      <dd class="adds">${adds}</dd>
+      <dd class="score">${score}</dd>
       <dd class="challenge-die vs1">${vs1}</dd>
       <dd class="challenge-die vs2">${vs2}</dd>
     </dl>
@@ -97,9 +95,9 @@ function parseOracleBlock(line: string): string {
   const result = resultMatch ? resultMatch[1] : '';
   const roll = rollMatch ? rollMatch[1] : '';
 
+  // Note: CSS handles icons via ::before pseudo-elements
   return `<dl class="oracle">
     <dt>Oracle</dt>
-    <dd class="oracle-icon">🔮</dd>
     <dd class="name">${escapeHtml(name)}</dd>
     <dd class="roll">${roll}</dd>
     <dd class="result">${escapeHtml(result)}</dd>
@@ -120,9 +118,9 @@ function parseOracleGroupBlock(content: string): string {
     const result = match[2];
     const roll = match[3];
     
+    // Note: CSS handles icons via ::before pseudo-elements
     oracles.push(`<dl class="oracle">
       <dt>Oracle</dt>
-      <dd class="oracle-icon">🔮</dd>
       <dd class="name">${escapeHtml(oracleName)}</dd>
       <dd class="roll">${roll}</dd>
       <dd class="result">${escapeHtml(result)}</dd>

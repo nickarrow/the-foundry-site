@@ -1,6 +1,6 @@
 /**
  * Iron Vault Inline Mechanics Parser
- * Parses `iv-*` inline code and generates HTML matching the Iron Vault CSS structure
+ * Parses `iv-*` inline code and generates HTML matching the Iron Vault plugin CSS structure
  */
 
 export function parseInlineMechanic(code: string, baseUrl: string = ''): string | null {
@@ -60,29 +60,22 @@ function renderMove(content: string): string {
   const score = action + statValue + adds;
   const outcome = getOutcome(score, vs1, vs2);
   const match = isMatch(vs1, vs2);
-  const matchClass = match ? ' match' : '';
 
-  // Outcome hexagon indicators
-  let outcomeIcons = '';
-  if (outcome === 'strong-hit') {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex hit">⬡</span><span class="hex hit">⬡</span></span>';
-  } else if (outcome === 'weak-hit') {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex hit">⬡</span><span class="hex miss">⬢</span></span>';
-  } else {
-    outcomeIcons = '<span class="outcome-icons"><span class="hex miss">⬢</span><span class="hex miss">⬢</span></span>';
-  }
+  // Build class list
+  const classes = ['iv-inline-mechanics', outcome];
+  if (match) classes.push('match');
 
-  return `<span class="iv-inline iv-move ${outcome}${matchClass}">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-move-name">${escapeHtml(name)}</span>` +
-    `<span class="iv-stat">(${escapeHtml(stat)})</span>` +
-    `${outcomeIcons};` +
-    `<span class="iv-score">${score}</span>` +
-    `<span class="iv-vs">vs</span>` +
-    `<span class="iv-challenge vs1">${vs1}</span>` +
-    `<span class="iv-sep">|</span>` +
-    `<span class="iv-challenge vs2">${vs2}</span>` +
-    `${match ? '<span class="iv-match">match</span>' : ''}` +
+  return `<span class="${classes.join(' ')}">` +
+    `<span class="iv-inline-move-name iv-inline-link">${escapeHtml(name)}</span>` +
+    `<span class="iv-inline-stat">(${escapeHtml(stat)})</span>` +
+    `<span class="iv-inline-outcome-icon"></span>` +
+    `<span>;</span>` +
+    `<span class="iv-inline-score">${score}</span>` +
+    `<span>vs</span>` +
+    `<span class="iv-inline-challenge-die vs1">${vs1}</span>` +
+    `<span>|</span>` +
+    `<span class="iv-inline-challenge-die vs2">${vs2}</span>` +
+    `${match ? '<span class="iv-inline-match">match</span>' : ''}` +
     `</span>`;
 }
 
@@ -93,12 +86,10 @@ function renderOracle(content: string): string {
   const roll = parts[1] || '';
   const result = parts[2] || '';
 
-  return `<span class="iv-inline iv-oracle">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-oracle-icon">🔮</span>` +
-    `<span class="iv-oracle-name">${escapeHtml(name)}</span>` +
-    `<span class="iv-roll">(${roll})</span>` +
-    `<span class="iv-result">"${escapeHtml(result)}"</span>` +
+  return `<span class="iv-inline-mechanics oracle">` +
+    `<span class="iv-inline-oracle-name iv-inline-link">${escapeHtml(name)}</span>` +
+    `<span>(${roll})</span>` +
+    `<span class="iv-inline-oracle-result">${escapeHtml(result)}</span>` +
     `</span>`;
 }
 
@@ -109,14 +100,11 @@ function renderMeter(content: string): string {
   const from = parseInt(parts[1]) || 0;
   const to = parseInt(parts[2]) || 0;
   const delta = to - from;
-  const deltaClass = delta > 0 ? 'positive' : delta < 0 ? 'negative' : '';
+  const meterClass = delta > 0 ? 'meter-increase' : delta < 0 ? 'meter-decrease' : '';
 
-  return `<span class="iv-inline iv-meter ${deltaClass}">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-meter-name">${escapeHtml(name)}</span>` +
-    `<span class="iv-from">${from}</span>` +
-    `<span class="iv-arrow">→</span>` +
-    `<span class="iv-to">${to}</span>` +
+  return `<span class="iv-inline-mechanics ${meterClass}">` +
+    `<span class="iv-inline-meter-name">${escapeHtml(name)}:</span>` +
+    `<span class="iv-inline-meter-change">${from} → ${to}</span>` +
     `</span>`;
 }
 
@@ -126,13 +114,18 @@ function renderInitiative(content: string): string {
   const label = parts[0] || '';
   const to = parts[2] || parts[1] || '';
   const inControl = to.toLowerCase().includes('control');
+  const initClass = inControl ? 'initiative-control' : 'initiative-bad-spot';
 
-  return `<span class="iv-inline iv-initiative ${inControl ? 'in-control' : 'bad-spot'}">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-init-label">${escapeHtml(label)}:</span>` +
-    `<span class="iv-init-state">${escapeHtml(to)}</span>` +
+  return `<span class="iv-inline-mechanics ${initClass}">` +
+    `<span class="iv-inline-initiative-label">${escapeHtml(label)}:</span>` +
+    `<span class="iv-inline-initiative-state">${escapeHtml(to)}</span>` +
     `</span>`;
 }
+
+// Lucide icons as inline SVGs - matching the exact icons used by Iron Vault in Obsidian
+const ICON_SQUARE_STACK = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-square-stack"><path d="M4 10c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2"></path><path d="M10 16c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2"></path><rect x="14" y="14" width="8" height="8" rx="2"></rect></svg>`;
+const ICON_COPY_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy-check"><path d="m12 15 2 2 4-4"></path><rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>`;
+const ICON_FILE_PLUS = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-file-plus"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M9 15h6"></path><path d="M12 18v-6"></path></svg>`;
 
 function renderTrackCreate(content: string, baseUrl: string): string {
   // Format: Name|path
@@ -141,11 +134,9 @@ function renderTrackCreate(content: string, baseUrl: string): string {
   const path = parts[1] || '';
   const slug = pathToSlug(path);
 
-  return `<span class="iv-inline iv-track-create">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-track-icon">☐</span>` +
-    `<a href="${baseUrl}/${slug}" class="iv-track-link">${escapeHtml(name)}</a>` +
-    `<span class="iv-status">added</span>` +
+  return `<span class="iv-inline-mechanics track-create">` +
+    `<span class="iv-inline-track-icon">${ICON_SQUARE_STACK}</span>` +
+    `<a href="${baseUrl}/${slug}" class="iv-inline-track-name iv-inline-link">${escapeHtml(name)}</a>` +
     `</span>`;
 }
 
@@ -160,12 +151,10 @@ function renderTrackAdvance(content: string, baseUrl: string): string {
   const slug = pathToSlug(path);
   const boxes = Math.floor(to / 4);
 
-  return `<span class="iv-inline iv-track-advance">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-track-icon">⏩</span>` +
-    `<a href="${baseUrl}/${slug}" class="iv-track-link">${escapeHtml(name)}</a>` +
-    `<span class="iv-steps">+${steps}</span>` +
-    `<span class="iv-progress">(${boxes}/10)</span>` +
+  return `<span class="iv-inline-mechanics track-advance">` +
+    `<span class="iv-inline-track-icon">${ICON_COPY_CHECK}</span>` +
+    `<a href="${baseUrl}/${slug}" class="iv-inline-track-name iv-inline-link">${escapeHtml(name)}</a>` +
+    `<span class="iv-inline-track-progress"> +${steps} (${boxes}/10)</span>` +
     `</span>`;
 }
 
@@ -182,15 +171,18 @@ function renderProgressRoll(content: string, baseUrl: string): string {
   const match = isMatch(vs1, vs2);
   const slug = pathToSlug(path);
 
-  return `<span class="iv-inline iv-progress-roll ${outcome}${match ? ' match' : ''}">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-track-icon">⏩</span>` +
-    `<a href="${baseUrl}/${slug}" class="iv-track-link">${escapeHtml(name)}</a>` +
-    `<span class="iv-score">${progress}</span>` +
-    `<span class="iv-vs">vs</span>` +
-    `<span class="iv-challenge vs1">${vs1}</span>` +
-    `<span class="iv-sep">|</span>` +
-    `<span class="iv-challenge vs2">${vs2}</span>` +
+  const classes = ['iv-inline-mechanics', outcome];
+  if (match) classes.push('match');
+
+  return `<span class="${classes.join(' ')}">` +
+    `<span class="iv-inline-progress-name iv-inline-link">${escapeHtml(name)}</span>` +
+    `<span class="iv-inline-outcome-icon"></span>` +
+    `<span>; </span>` +
+    `<span class="iv-inline-score">${progress}</span>` +
+    `<span> vs </span>` +
+    `<span class="iv-inline-challenge-die vs1">${vs1}</span>` +
+    `<span>|</span>` +
+    `<span class="iv-inline-challenge-die vs2">${vs2}</span>` +
     `</span>`;
 }
 
@@ -199,9 +191,8 @@ function renderNoRoll(content: string): string {
   const parts = content.split('|');
   const name = parts[0] || '';
 
-  return `<span class="iv-inline iv-noroll">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-move-name">${escapeHtml(name)}</span>` +
+  return `<span class="iv-inline-mechanics no-roll">` +
+    `<span class="iv-inline-move-name iv-inline-link">${escapeHtml(name)}</span>` +
     `</span>`;
 }
 
@@ -213,10 +204,10 @@ function renderEntityCreate(content: string, baseUrl: string): string {
   const path = parts[2] || '';
   const slug = pathToSlug(path);
 
-  return `<span class="iv-inline iv-entity-create">` +
-    `<span class="iv-bracket">⌊</span>` +
-    `<span class="iv-entity-type">${escapeHtml(type)}:</span>` +
-    `<a href="${baseUrl}/${slug}" class="iv-entity-link">${escapeHtml(name)}</a>` +
+  return `<span class="iv-inline-mechanics entity-create">` +
+    `<span class="iv-inline-entity-icon">${ICON_FILE_PLUS}</span>` +
+    `<span class="iv-inline-entity-type">${escapeHtml(type)}:</span>` +
+    `<a href="${baseUrl}/${slug}" class="iv-inline-entity-name iv-inline-link">${escapeHtml(name)}</a>` +
     `</span>`;
 }
 

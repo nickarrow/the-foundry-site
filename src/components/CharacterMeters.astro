@@ -14,130 +14,52 @@ interface Props {
 const { momentum, health, spirit, supply, edge, heart, iron, shadow, wits } = Astro.props;
 
 const stats = [
-  { name: 'Edge', value: edge },
-  { name: 'Heart', value: heart },
-  { name: 'Iron', value: iron },
-  { name: 'Shadow', value: shadow },
-  { name: 'Wits', value: wits },
+  { name: 'edge', value: edge },
+  { name: 'heart', value: heart },
+  { name: 'iron', value: iron },
+  { name: 'shadow', value: shadow },
+  { name: 'wits', value: wits },
 ];
 
 const meters = [
-  { name: 'Health', value: health, max: 5, color: 'health' },
-  { name: 'Spirit', value: spirit, max: 5, color: 'spirit' },
-  { name: 'Supply', value: supply, max: 5, color: 'supply' },
+  { name: 'health', value: health },
+  { name: 'spirit', value: spirit },
+  { name: 'supply', value: supply },
 ];
 ---
 
-<div class="character-meters">
-  <div class="stats-row">
+<article class="iron-vault-character">
+  <ul class="stats">
     {stats.map(stat => (
-      <div class="stat">
-        <span class="stat-value">{stat.value}</span>
-        <span class="stat-name">{stat.name}</span>
-      </div>
+      <li>
+        <dl>
+          <dt data-value={stat.name}>{stat.name}</dt>
+          <dd>
+            <input type="text" inputmode="numeric" value={stat.value} readonly />
+          </dd>
+        </dl>
+      </li>
     ))}
-  </div>
+  </ul>
   
-  <div class="meters-row">
-    <div class="momentum-meter">
-      <span class="meter-label">Momentum</span>
-      <span class="meter-value momentum">{momentum}</span>
-    </div>
-    
+  <ul class="meters">
     {meters.map(meter => (
-      <div class="meter">
-        <span class="meter-label">{meter.name}</span>
-        <div class="meter-track">
-          {Array.from({ length: meter.max }, (_, i) => (
-            <span class={`meter-pip ${i < meter.value ? 'filled' : ''} ${meter.color}`} />
-          ))}
-        </div>
-        <span class="meter-value">{meter.value}/{meter.max}</span>
-      </div>
+      <li>
+        <dl>
+          <dt data-value={meter.name}>{meter.name}</dt>
+          <dd data-value={meter.value}>
+            <span>{meter.value}</span>
+          </dd>
+        </dl>
+      </li>
     ))}
-  </div>
-</div>
-
-<style>
-  .character-meters {
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem 0;
-  }
-  
-  .stats-row {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-color);
-  }
-  
-  .stat-name {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  
-  .meters-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: space-around;
-  }
-  
-  .meter, .momentum-meter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  
-  .meter-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  
-  .meter-track {
-    display: flex;
-    gap: 4px;
-  }
-  
-  .meter-pip {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 50%;
-    background: transparent;
-  }
-  
-  .meter-pip.filled.health { background: #e74c3c; border-color: #e74c3c; }
-  .meter-pip.filled.spirit { background: #9b59b6; border-color: #9b59b6; }
-  .meter-pip.filled.supply { background: #f39c12; border-color: #f39c12; }
-  
-  .meter-value {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-  
-  .meter-value.momentum {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-color);
-  }
-</style>
+    <li class="momentum">
+      <dl>
+        <dt>momentum</dt>
+        <dd data-value={momentum}>
+          <span>{momentum}</span>
+        </dd>
+      </dl>
+    </li>
+  </ul>
+</article>
