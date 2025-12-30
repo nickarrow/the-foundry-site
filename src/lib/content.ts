@@ -127,6 +127,9 @@ export function buildNavigationTree(): NavNode[] {
   const files = getAllContentFiles();
   const tree: NavNode[] = [];
   
+  // Collect all unique directory paths (including intermediate ones)
+  const allDirs = new Set<string>();
+  
   // Group files by directory
   const byDir = new Map<string, ContentFile[]>();
   
@@ -136,21 +139,40 @@ export function buildNavigationTree(): NavNode[] {
     const dir = normalizedPath.includes('/') 
       ? normalizedPath.substring(0, normalizedPath.lastIndexOf('/'))
       : '.';
+    
     if (!byDir.has(dir)) {
       byDir.set(dir, []);
     }
     byDir.get(dir)!.push(file);
+    
+    // Add all parent directories to allDirs
+    const parts = dir.split('/');
+    let currentPath = '';
+    for (const part of parts) {
+      currentPath = currentPath ? `${currentPath}/${part}` : part;
+      if (currentPath !== '.') {
+        allDirs.add(currentPath);
+      }
+    }
+  }
+  
+  // Ensure all directories are in byDir (even if empty)
+  for (const dir of allDirs) {
+    if (!byDir.has(dir)) {
+      byDir.set(dir, []);
+    }
   }
   
   // Build tree structure
-  function buildNode(dirPath: string, files: ContentFile[]): NavNode {
+  function buildNode(dirPath: string): NavNode {
     // Normalize for display
     const normalizedDir = dirPath.replace(/\\/g, '/');
     const name = normalizedDir === '.' ? 'Home' : normalizedDir.split('/').pop() || dirPath;
     const children: NavNode[] = [];
     
     // Add files in this directory
-    for (const file of files) {
+    const dirFiles = byDir.get(dirPath) || [];
+    for (const file of dirFiles) {
       children.push({
         name: file.title,
         slug: file.slug,
@@ -159,13 +181,13 @@ export function buildNavigationTree(): NavNode[] {
     }
     
     // Add subdirectories
-    for (const [subDir, subFiles] of byDir) {
+    for (const subDir of allDirs) {
       const normalizedSubDir = subDir.replace(/\\/g, '/');
       const parentDir = normalizedSubDir.includes('/')
         ? normalizedSubDir.substring(0, normalizedSubDir.lastIndexOf('/'))
         : '.';
-      if (normalizedSubDir !== normalizedDir && parentDir === normalizedDir) {
-        children.push(buildNode(subDir, subFiles));
+      if (parentDir === normalizedDir) {
+        children.push(buildNode(subDir));
       }
     }
     
@@ -198,11 +220,11 @@ export function buildNavigationTree(): NavNode[] {
   }
   
   // Add top-level directories
-  for (const [dir, files] of byDir) {
+  for (const dir of allDirs) {
     // Normalize path separators for cross-platform compatibility
     const normalizedDir = dir.replace(/\\/g, '/');
-    if (normalizedDir !== '.' && !normalizedDir.includes('/')) {
-      tree.push(buildNode(dir, files));
+    if (!normalizedDir.includes('/')) {
+      tree.push(buildNode(dir));
     }
   }
   
