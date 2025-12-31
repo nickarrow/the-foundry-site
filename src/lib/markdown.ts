@@ -261,11 +261,21 @@ function findImagePath(filename: string, baseUrl: string): string {
 
 // Custom remark plugin for Iron Vault syntax
 function remarkIronVault(options: { allFiles: ContentFile[]; baseUrl: string }) {
+  // Build a lookup map for file resolution
+  const filesByName = new Map<string, ContentFile>();
+  for (const file of options.allFiles) {
+    // Index by title (case-insensitive)
+    filesByName.set(file.title.toLowerCase(), file);
+    // Also index by filename without extension
+    const filename = file.path.split(/[/\\]/).pop()?.replace(/\.md$/, '') || '';
+    filesByName.set(filename.toLowerCase(), file);
+  }
+  
   return (tree: any) => {
     visit(tree, (node, index, parent) => {
       // Handle inline code with iv-* prefix
       if (node.type === 'inlineCode' && node.value.startsWith('iv-')) {
-        const html = parseInlineMechanic(node.value, options.baseUrl);
+        const html = parseInlineMechanic(node.value, options.baseUrl, filesByName);
         if (html) {
           node.type = 'html';
           node.value = html;

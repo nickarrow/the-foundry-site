@@ -3,7 +3,14 @@
  * Parses `iv-*` inline code and generates HTML matching the Iron Vault plugin CSS structure
  */
 
-export function parseInlineMechanic(code: string, baseUrl: string = ''): string | null {
+// Type for file lookup
+interface FileInfo {
+  slug: string;
+  title: string;
+  path: string;
+}
+
+export function parseInlineMechanic(code: string, baseUrl: string = '', filesByName?: Map<string, FileInfo>): string | null {
   if (!code.startsWith('iv-')) return null;
 
   const colonIndex = code.indexOf(':');
@@ -22,15 +29,15 @@ export function parseInlineMechanic(code: string, baseUrl: string = ''): string 
     case 'iv-initiative':
       return renderInitiative(content);
     case 'iv-track-create':
-      return renderTrackCreate(content, baseUrl);
+      return renderTrackCreate(content, baseUrl, filesByName);
     case 'iv-track-advance':
-      return renderTrackAdvance(content, baseUrl);
+      return renderTrackAdvance(content, baseUrl, filesByName);
     case 'iv-progress':
-      return renderProgressRoll(content, baseUrl);
+      return renderProgressRoll(content, baseUrl, filesByName);
     case 'iv-noroll':
       return renderNoRoll(content);
     case 'iv-entity-create':
-      return renderEntityCreate(content, baseUrl);
+      return renderEntityCreate(content, baseUrl, filesByName);
     default:
       return null;
   }
@@ -127,12 +134,12 @@ const ICON_SQUARE_STACK = `<svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const ICON_COPY_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-copy-check"><path d="m12 15 2 2 4-4"></path><rect x="8" y="8" width="14" height="14" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>`;
 const ICON_FILE_PLUS = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon lucide-file-plus"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M9 15h6"></path><path d="M12 18v-6"></path></svg>`;
 
-function renderTrackCreate(content: string, baseUrl: string): string {
+function renderTrackCreate(content: string, baseUrl: string, filesByName?: Map<string, FileInfo>): string {
   // Format: Name|path
   const parts = content.split('|');
   const name = parts[0] || '';
   const path = parts[1] || '';
-  const slug = pathToSlug(path);
+  const slug = resolvePathToSlug(path, filesByName);
 
   return `<span class="iv-inline-mechanics track-create">` +
     `<span class="iv-inline-track-icon">${ICON_SQUARE_STACK}</span>` +
@@ -140,7 +147,7 @@ function renderTrackCreate(content: string, baseUrl: string): string {
     `</span>`;
 }
 
-function renderTrackAdvance(content: string, baseUrl: string): string {
+function renderTrackAdvance(content: string, baseUrl: string, filesByName?: Map<string, FileInfo>): string {
   // Format: Name|path|from|to|rank|steps
   const parts = content.split('|');
   const name = parts[0] || '';
@@ -148,7 +155,7 @@ function renderTrackAdvance(content: string, baseUrl: string): string {
   const from = parseInt(parts[2]) || 0;
   const to = parseInt(parts[3]) || 0;
   const steps = parseInt(parts[5]) || 1;
-  const slug = pathToSlug(path);
+  const slug = resolvePathToSlug(path, filesByName);
   const boxes = Math.floor(to / 4);
 
   return `<span class="iv-inline-mechanics track-advance">` +
@@ -158,7 +165,7 @@ function renderTrackAdvance(content: string, baseUrl: string): string {
     `</span>`;
 }
 
-function renderProgressRoll(content: string, baseUrl: string): string {
+function renderProgressRoll(content: string, baseUrl: string, filesByName?: Map<string, FileInfo>): string {
   // Format: Name|progress|vs1|vs2|path
   const parts = content.split('|');
   const name = parts[0] || '';
@@ -169,7 +176,7 @@ function renderProgressRoll(content: string, baseUrl: string): string {
   
   const outcome = getOutcome(progress, vs1, vs2);
   const match = isMatch(vs1, vs2);
-  const slug = pathToSlug(path);
+  const slug = resolvePathToSlug(path, filesByName);
 
   const classes = ['iv-inline-mechanics', outcome];
   if (match) classes.push('match');
@@ -196,19 +203,39 @@ function renderNoRoll(content: string): string {
     `</span>`;
 }
 
-function renderEntityCreate(content: string, baseUrl: string): string {
+function renderEntityCreate(content: string, baseUrl: string, filesByName?: Map<string, FileInfo>): string {
   // Format: Type|Name|path
   const parts = content.split('|');
   const type = parts[0] || '';
   const name = parts[1] || '';
   const path = parts[2] || '';
-  const slug = pathToSlug(path);
+  const slug = resolvePathToSlug(path, filesByName);
 
   return `<span class="iv-inline-mechanics entity-create">` +
     `<span class="iv-inline-entity-icon">${ICON_FILE_PLUS}</span>` +
     `<span class="iv-inline-entity-type">${escapeHtml(type)}:</span>` +
     `<a href="${baseUrl}/${slug}" class="iv-inline-entity-name iv-inline-link">${escapeHtml(name)}</a>` +
     `</span>`;
+}
+
+// Resolve a path (which might be just a filename) to a full slug
+function resolvePathToSlug(path: string, filesByName?: Map<string, FileInfo>): string {
+  if (!path) return '#';
+  
+  // Extract just the filename without extension for lookup
+  const filename = path.replace(/\.md$/, '').split(/[/\\]/).pop() || '';
+  const lookupKey = filename.toLowerCase();
+  
+  // Try to find the file in the lookup map
+  if (filesByName) {
+    const file = filesByName.get(lookupKey);
+    if (file) {
+      return file.slug;
+    }
+  }
+  
+  // Fallback to simple slug conversion
+  return pathToSlug(path);
 }
 
 export function pathToSlug(path: string): string {
