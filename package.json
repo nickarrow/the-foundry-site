@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "prebuild": "node scripts/generate-changelog.js && node scripts/copy-attachments.js",
     "build": "astro build",
+    "postbuild": "npx pagefind --site dist --output-path dist/pagefind",
     "preview": "astro preview",
     "astro": "astro"
   },

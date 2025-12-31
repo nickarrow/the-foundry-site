@@ -15,11 +15,36 @@ const { title } = Astro.props;
     <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}/favicon.png`} />
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/main.css`} />
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/iron-vault.css`} />
+    <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/pagefind/pagefind-ui.css`} />
   </head>
   <body>
     <div class="app">
       <slot />
     </div>
+    <script is:inline>
+      // Initialize Pagefind search after page loads
+      window.addEventListener('DOMContentLoaded', function() {
+        // Load Pagefind UI script dynamically
+        var script = document.createElement('script');
+        script.src = '/the-foundry-site/pagefind/pagefind-ui.js';
+        script.onload = function() {
+          new PagefindUI({
+            element: '#search-container',
+            showSubResults: true,
+            showImages: false,
+            resetStyles: false
+          });
+        };
+        script.onerror = function() {
+          // Pagefind not available - show fallback
+          var container = document.getElementById('search-container');
+          if (container) {
+            container.innerHTML = '<input type="text" placeholder="Search..." disabled style="width:100%;padding:0.5rem 0.75rem;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-muted);font-size:0.9rem;cursor:not-allowed;" />';
+          }
+        };
+        document.head.appendChild(script);
+      });
+    </script>
     <script>
       // Mobile sidebar toggle
       document.addEventListener('DOMContentLoaded', () => {
