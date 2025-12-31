@@ -69,6 +69,12 @@ if (isCharacter) {
                        (frontmatter.Discoveries_XPEarned || 0);
   const totalXp = xpFromTracks + xpAdded;
   
+  // Character info fields from frontmatter
+  const callsign = frontmatter.callsign || '';
+  const pronouns = frontmatter.pronouns || '';
+  const description = frontmatter.description || '';
+  const player = frontmatter.player || '';
+  
   // Character Info HTML - matches the CSS grid layout
   const characterInfoHtml = `
     <section class="iron-vault-character">
@@ -76,13 +82,13 @@ if (isCharacter) {
         <div class="name"><input type="text" value="${characterName}" readonly /></div>
         <dl>
           <dt>Callsign</dt>
-          <dd class="callsign"><input type="text" value="" readonly /></dd>
+          <dd class="callsign"><input type="text" value="${callsign}" readonly /></dd>
           <dt>Pronouns</dt>
-          <dd class="pronouns"><input type="text" value="" readonly /></dd>
+          <dd class="pronouns"><input type="text" value="${pronouns}" readonly /></dd>
           <dt>Description</dt>
-          <dd class="description"><input type="text" value="" readonly /></dd>
+          <dd class="description"><input type="text" value="${description}" readonly /></dd>
           <dt>Player</dt>
-          <dd class="player"><input type="text" value="" readonly /></dd>
+          <dd class="player"><input type="text" value="${player}" readonly /></dd>
           <dt>XP From Tracks</dt>
           <dd class="xp-from-tracks">${xpFromTracks}</dd>
           <dt>XP Added</dt>
@@ -189,38 +195,57 @@ if (isCharacter) {
     characterSpecialTracksHtml
   );
   
-  // Impacts HTML (placeholder for now - would need impact data from frontmatter)
+  // Impacts HTML - read from frontmatter
+  const impacts = {
+    // Misfortunes
+    wounded: frontmatter.wounded || false,
+    shaken: frontmatter.shaken || false,
+    unprepared: frontmatter.unprepared || false,
+    // Lasting Effects
+    permanently_harmed: frontmatter.permanently_harmed || false,
+    traumatized: frontmatter.traumatized || false,
+    // Burdens
+    doomed: frontmatter.doomed || false,
+    tormented: frontmatter.tormented || false,
+    indebted: frontmatter.indebted || false,
+    // Vehicle
+    battered: frontmatter.battered || false,
+    cursed: frontmatter.cursed || false,
+  };
+  
+  const checkedAttr = (val: boolean) => val ? 'checked' : '';
+  
   const characterImpactsHtml = `
     <section class="iron-vault-character">
       <ul class="impact-categories">
         <li>
           <header>Misfortunes</header>
           <ul>
-            <li><label><input type="checkbox" disabled /><span>Wounded</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Shaken</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Unprepared</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.wounded)} disabled /><span>Wounded</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.shaken)} disabled /><span>Shaken</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.unprepared)} disabled /><span>Unprepared</span></label></li>
           </ul>
         </li>
         <li>
           <header>Lasting Effects</header>
           <ul>
-            <li><label><input type="checkbox" disabled /><span>Permanently Harmed</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Traumatized</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.permanently_harmed)} disabled /><span>Permanently Harmed</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.traumatized)} disabled /><span>Traumatized</span></label></li>
           </ul>
         </li>
         <li>
           <header>Burdens</header>
           <ul>
-            <li><label><input type="checkbox" disabled /><span>Doomed</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Tormented</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Indebted</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.doomed)} disabled /><span>Doomed</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.tormented)} disabled /><span>Tormented</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.indebted)} disabled /><span>Indebted</span></label></li>
           </ul>
         </li>
         <li>
           <header>Current Vehicle</header>
           <ul>
-            <li><label><input type="checkbox" disabled /><span>Battered</span></label></li>
-            <li><label><input type="checkbox" disabled /><span>Cursed</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.battered)} disabled /><span>Battered</span></label></li>
+            <li><label><input type="checkbox" ${checkedAttr(impacts.cursed)} disabled /><span>Cursed</span></label></li>
           </ul>
         </li>
       </ul>
