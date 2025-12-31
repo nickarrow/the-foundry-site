@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import ProgressTrack from '../components/ProgressTrack.astro';
 import { getAllContentFiles, getContentFile } from '../lib/content';
 import { processMarkdown } from '../lib/markdown';
 
@@ -37,6 +36,10 @@ const isProgressTrack = ironVaultKind === 'progress';
 
 // Generate character meters HTML and replace placeholder
 if (isCharacter) {
+  const characterName = frontmatter.name || title;
+  const xpSpent = frontmatter.xp_spent || 0;
+  const xpAdded = frontmatter.xp_added || 0;
+  
   const stats = [
     { name: 'edge', value: frontmatter.edge || 0 },
     { name: 'heart', value: frontmatter.heart || 0 },
@@ -53,6 +56,52 @@ if (isCharacter) {
   
   const momentum = frontmatter.momentum || 0;
   
+  // Special tracks (legacy tracks)
+  const specialTracks = [
+    { name: 'Quests', progress: frontmatter.Quests_Progress || 0, xp: frontmatter.Quests_XPEarned || 0 },
+    { name: 'Bonds', progress: frontmatter.Bonds_Progress || 0, xp: frontmatter.Bonds_XPEarned || 0 },
+    { name: 'Discoveries', progress: frontmatter.Discoveries_Progress || 0, xp: frontmatter.Discoveries_XPEarned || 0 },
+  ];
+  
+  // Calculate XP from tracks
+  const xpFromTracks = (frontmatter.Quests_XPEarned || 0) + 
+                       (frontmatter.Bonds_XPEarned || 0) + 
+                       (frontmatter.Discoveries_XPEarned || 0);
+  const totalXp = xpFromTracks + xpAdded;
+  
+  // Character Info HTML - matches the CSS grid layout
+  const characterInfoHtml = `
+    <section class="iron-vault-character">
+      <section class="character-info">
+        <div class="name"><input type="text" value="${characterName}" readonly /></div>
+        <dl>
+          <dt>Callsign</dt>
+          <dd class="callsign"><input type="text" value="" readonly /></dd>
+          <dt>Pronouns</dt>
+          <dd class="pronouns"><input type="text" value="" readonly /></dd>
+          <dt>Description</dt>
+          <dd class="description"><input type="text" value="" readonly /></dd>
+          <dt>Player</dt>
+          <dd class="player"><input type="text" value="" readonly /></dd>
+          <dt>XP From Tracks</dt>
+          <dd class="xp-from-tracks">${xpFromTracks}</dd>
+          <dt>XP Added</dt>
+          <dd class="xp-added">${xpAdded}</dd>
+          <dt>Total XP Earned</dt>
+          <dd class="total-xp">${totalXp}</dd>
+          <dt>XP Spent</dt>
+          <dd class="xp-spent">${xpSpent}</dd>
+        </dl>
+      </section>
+    </section>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-info-placeholder"></div>',
+    characterInfoHtml
+  );
+  
+  // Stats HTML
   const statsHtml = stats.map(s => `
     <li>
       <dl>
@@ -62,6 +111,18 @@ if (isCharacter) {
     </li>
   `).join('');
   
+  const characterStatsHtml = `
+    <section class="iron-vault-character">
+      <ul class="stats">${statsHtml}</ul>
+    </section>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-stats-placeholder"></div>',
+    characterStatsHtml
+  );
+  
+  // Meters HTML
   const metersHtml = meters.map(m => `
     <li>
       <dl>
@@ -72,8 +133,7 @@ if (isCharacter) {
   `).join('');
   
   const characterMetersHtml = `
-    <article class="iron-vault-character">
-      <ul class="stats">${statsHtml}</ul>
+    <section class="iron-vault-character">
       <ul class="meters">
         ${metersHtml}
         <li class="momentum">
@@ -83,12 +143,107 @@ if (isCharacter) {
           </dl>
         </li>
       </ul>
-    </article>
+    </section>
   `;
   
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-meters-placeholder"></div>',
     characterMetersHtml
+  );
+  
+  // Special Tracks HTML (legacy tracks with progress boxes)
+  const getBoxValue = (ticks: number, boxIndex: number): number => {
+    const fullBoxes = Math.floor(ticks / 4);
+    const remainingTicks = ticks % 4;
+    if (boxIndex < fullBoxes) return 4;
+    if (boxIndex === fullBoxes) return remainingTicks;
+    return 0;
+  };
+  
+  const specialTracksHtml = specialTracks.map(track => {
+    const boxesHtml = Array.from({ length: 10 }, (_, i) => 
+      `<li data-value="${getBoxValue(track.progress, i)}"></li>`
+    ).join('');
+    
+    return `
+      <div class="iron-vault-track" data-track="${track.name.toLowerCase()}">
+        <span class="track-name">${track.name}</span>
+        <span class="track-xp">${track.xp}</span>
+        <div class="track-widget">
+          <ol>${boxesHtml}</ol>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  const characterSpecialTracksHtml = `
+    <section class="iron-vault-character">
+      <ul class="special-tracks">
+        ${specialTracksHtml}
+      </ul>
+    </section>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-special-tracks-placeholder"></div>',
+    characterSpecialTracksHtml
+  );
+  
+  // Impacts HTML (placeholder for now - would need impact data from frontmatter)
+  const characterImpactsHtml = `
+    <section class="iron-vault-character">
+      <ul class="impact-categories">
+        <li>
+          <header>Misfortunes</header>
+          <ul>
+            <li><label><input type="checkbox" disabled /><span>Wounded</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Shaken</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Unprepared</span></label></li>
+          </ul>
+        </li>
+        <li>
+          <header>Lasting Effects</header>
+          <ul>
+            <li><label><input type="checkbox" disabled /><span>Permanently Harmed</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Traumatized</span></label></li>
+          </ul>
+        </li>
+        <li>
+          <header>Burdens</header>
+          <ul>
+            <li><label><input type="checkbox" disabled /><span>Doomed</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Tormented</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Indebted</span></label></li>
+          </ul>
+        </li>
+        <li>
+          <header>Current Vehicle</header>
+          <ul>
+            <li><label><input type="checkbox" disabled /><span>Battered</span></label></li>
+            <li><label><input type="checkbox" disabled /><span>Cursed</span></label></li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-impacts-placeholder"></div>',
+    characterImpactsHtml
+  );
+  
+  // Assets HTML (placeholder - would need asset data)
+  const characterAssetsHtml = `
+    <section class="iron-vault-character assets">
+      <div class="assets-placeholder">
+        <em>Assets would be displayed here</em>
+      </div>
+    </section>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-character-assets-placeholder"></div>',
+    characterAssetsHtml
   );
 }
 
@@ -100,6 +255,42 @@ const trackData = isProgressTrack ? {
   trackType: frontmatter['track-type'] || 'Vow',
   complete: frontmatter.tags?.includes('complete') || false,
 } : null;
+
+// Generate progress track HTML and replace placeholder
+if (isProgressTrack && trackData) {
+  const ticks = trackData.progress;
+  const fullBoxes = Math.floor(ticks / 4);
+  const remainingTicks = ticks % 4;
+  
+  const getBoxValue = (boxIndex: number): number => {
+    if (boxIndex < fullBoxes) return 4;
+    if (boxIndex === fullBoxes) return remainingTicks;
+    return 0;
+  };
+  
+  const displayRank = trackData.rank.charAt(0).toUpperCase() + trackData.rank.slice(1).toLowerCase();
+  
+  const boxesHtml = Array.from({ length: 10 }, (_, i) => 
+    `<li data-value="${getBoxValue(i)}">${getBoxValue(i)}</li>`
+  ).join('');
+  
+  const trackHtml = `
+    <div class="iron-vault-track" data-rank="${trackData.rank}" data-complete="${trackData.complete}">
+      <span class="track-type">${trackData.trackType.toUpperCase()}</span>
+      <span class="track-rank">${displayRank.toUpperCase()}</span>
+      <div class="track-name">${trackData.name}</div>
+      <div class="track-widget">
+        <ol>${boxesHtml}</ol>
+      </div>
+      <div class="track-progress">${fullBoxes}/10 (${ticks} ticks)</div>
+    </div>
+  `;
+  
+  htmlContent = htmlContent.replace(
+    '<div class="iron-vault-track-placeholder"></div>',
+    trackHtml
+  );
+}
 ---
 
 <Layout title={title}>
@@ -109,10 +300,6 @@ const trackData = isProgressTrack ? {
     <Breadcrumbs slug={actualSlug} />
     
     <article class="page">
-      {isProgressTrack && trackData && (
-        <ProgressTrack {...trackData} />
-      )}
-      
       <div class="prose" set:html={htmlContent} />
     </article>
   </main>

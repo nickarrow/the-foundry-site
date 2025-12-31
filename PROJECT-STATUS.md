@@ -128,8 +128,8 @@ The site builds and deploys successfully with core functionality working.
   - `iv-progress` — progress rolls
   - `iv-noroll` — moves without rolls
   - `iv-entity-create` — entity creation links
-- Code block mechanics (`iron-vault-mechanics`)
-- Progress track component (renders from frontmatter)
+- Code block mechanics (`iron-vault-mechanics`) — moves, oracles, entities
+- Progress track component (`iron-vault-track`) — renders with proper Iron Vault SVG boxes
 - Character meters component (stats display)
 
 **Dataview Support**
@@ -256,4 +256,38 @@ Key classes from Iron Vault CSS:
 - `.iv-inline` — inline mechanic spans
 - `.strong-hit`, `.weak-hit`, `.miss` — outcome coloring
 - `.iron-vault-asset-card` — asset card styling
-- `.progress-track` — progress track boxes
+- `.iron-vault-track` — progress track container with SVG box backgrounds
+
+---
+
+## Implementation Notes
+
+### Progress Track Rendering (iron-vault-track)
+
+The `iron-vault-track` code blocks render progress tracks using the file's frontmatter data (name, rank, progress). The implementation:
+
+1. **Markdown Processing** (`src/lib/markdown.ts`): The remark plugin converts `iron-vault-track` code blocks to a placeholder div.
+
+2. **Page Template** (`src/pages/[...slug].astro`): For files with `iron-vault-kind: progress` frontmatter, the page generates the track HTML and replaces the placeholder. The HTML structure matches Iron Vault's expected format:
+   ```html
+   <div class="iron-vault-track" data-rank="extreme" data-complete="false">
+     <span class="track-type">VOW</span>
+     <span class="track-rank">EXTREME</span>
+     <div class="track-name">Track Name</div>
+     <div class="track-widget">
+       <ol>
+         <li data-value="2">2</li>  <!-- 2 ticks -->
+         <li data-value="0">0</li>  <!-- empty -->
+         ...
+       </ol>
+     </div>
+     <div class="track-progress">0/10 (2 ticks)</div>
+   </div>
+   ```
+
+3. **CSS Styling** (`public/styles/iron-vault.css`): The supplementary styles at the end of the file provide:
+   - Flexbox layout for the track container
+   - Proper positioning of type/rank header, name, and progress info
+   - SVG background images for each `data-value` (0-4) showing empty boxes, 1-4 tick marks
+   
+   The SVG backgrounds are the same ones used by the Iron Vault Obsidian plugin, ensuring visual consistency.

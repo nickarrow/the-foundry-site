@@ -296,6 +296,12 @@ function remarkIronVault(options: { allFiles: ContentFile[]; baseUrl: string }) 
           // This is rendered by the page component using frontmatter
           node.type = 'html';
           node.value = '<div class="iron-vault-track-placeholder"></div>';
+        } else if (node.lang === 'iron-vault-character-info') {
+          node.type = 'html';
+          node.value = '<div class="iron-vault-character-info-placeholder"></div>';
+        } else if (node.lang === 'iron-vault-character-stats') {
+          node.type = 'html';
+          node.value = '<div class="iron-vault-character-stats-placeholder"></div>';
         } else if (node.lang === 'iron-vault-character-meters') {
           node.type = 'html';
           node.value = '<div class="iron-vault-character-meters-placeholder"></div>';
