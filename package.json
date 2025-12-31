@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/copy-attachments.js",
+    "prebuild": "node scripts/generate-changelog.js && node scripts/copy-attachments.js",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
