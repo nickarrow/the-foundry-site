@@ -1,9 +1,9 @@
 name: Build and Deploy
 
 on:
-  # Run hourly
+  # Run every 15 minutes
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/15 * * * *'
   
   # Allow manual trigger
   workflow_dispatch:
