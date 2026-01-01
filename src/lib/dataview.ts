@@ -114,13 +114,24 @@ function parseSortClause(str: string): SortClause | null {
 export function executeDataviewQuery(query: DataviewQuery, files: ContentFile[]): ContentFile[] {
   let results = [...files];
   
-  // Filter by FROM (tags)
+  // Filter by FROM (tags or folder paths)
   for (const from of query.from) {
     if (from.startsWith('#')) {
+      // Tag filter: FROM #incomplete
       const tag = from.substring(1);
       results = results.filter(f => {
         const tags = f.frontmatter.tags || [];
         return Array.isArray(tags) ? tags.includes(tag) : tags === tag;
+      });
+    } else {
+      // Folder path filter: FROM "folder/path" or FROM folder/path
+      // Remove surrounding quotes if present
+      const folderPath = from.replace(/^["']|["']$/g, '').toLowerCase();
+      results = results.filter(f => {
+        // Normalize the file path for comparison (handle Windows backslashes)
+        const normalizedPath = f.path.replace(/\\/g, '/').toLowerCase();
+        // Check if the file is within the specified folder
+        return normalizedPath.startsWith(folderPath + '/') || normalizedPath === folderPath;
       });
     }
   }
