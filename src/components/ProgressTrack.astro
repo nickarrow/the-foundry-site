@@ -31,9 +31,7 @@ const displayRank = rank.charAt(0).toUpperCase() + rank.slice(1).toLowerCase();
   <div class="track-name">{name}</div>
   <div class="track-widget">
     <ol>
-      {Array.from({ length: 10 }, (_, i) => (
-        <li data-value={getBoxValue(i)}>{getBoxValue(i)}</li>
-      ))}
+      {Array.from({ length: 10 }, (_, i) => <li data-value={getBoxValue(i)}>{getBoxValue(i)}</li>)}
     </ol>
   </div>
   <div class="track-progress">{fullBoxes}/10 ({ticks} ticks)</div>

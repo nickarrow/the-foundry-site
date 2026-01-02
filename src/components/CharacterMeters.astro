@@ -30,29 +30,33 @@ const meters = [
 
 <article class="iron-vault-character">
   <ul class="stats">
-    {stats.map(stat => (
-      <li>
-        <dl>
-          <dt data-value={stat.name}>{stat.name}</dt>
-          <dd>
-            <input type="text" inputmode="numeric" value={stat.value} readonly />
-          </dd>
-        </dl>
-      </li>
-    ))}
+    {
+      stats.map((stat) => (
+        <li>
+          <dl>
+            <dt data-value={stat.name}>{stat.name}</dt>
+            <dd>
+              <input type="text" inputmode="numeric" value={stat.value} readonly />
+            </dd>
+          </dl>
+        </li>
+      ))
+    }
   </ul>
-  
+
   <ul class="meters">
-    {meters.map(meter => (
-      <li>
-        <dl>
-          <dt data-value={meter.name}>{meter.name}</dt>
-          <dd data-value={meter.value}>
-            <span>{meter.value}</span>
-          </dd>
-        </dl>
-      </li>
-    ))}
+    {
+      meters.map((meter) => (
+        <li>
+          <dl>
+            <dt data-value={meter.name}>{meter.name}</dt>
+            <dd data-value={meter.value}>
+              <span>{meter.value}</span>
+            </dd>
+          </dl>
+        </li>
+      ))
+    }
     <li class="momentum">
       <dl>
         <dt>momentum</dt>

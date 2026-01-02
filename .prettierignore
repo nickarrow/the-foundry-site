@@ -1,0 +1,7 @@
+dist/
+node_modules/
+.astro/
+content/
+public/attachments/
+obsidian-plugin-reference-styles/
+*.md

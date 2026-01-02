@@ -5,14 +5,19 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import MobileHeader from '../components/MobileHeader.astro';
 import { getAllContentFiles, getContentFile } from '../lib/content';
 import { processMarkdown } from '../lib/markdown';
-import { getCharacterAssets, convertDataswornLinks, type CharacterAsset, type MergedAsset } from '../lib/datasworn-assets';
+import {
+  getCharacterAssets,
+  convertDataswornLinks,
+  type CharacterAsset,
+  type MergedAsset,
+} from '../lib/datasworn-assets';
 
 export async function getStaticPaths() {
   const files = getAllContentFiles();
-  
-  return files.map(file => ({
+
+  return files.map((file) => ({
     params: { slug: file.slug || undefined },
-    props: { file }
+    props: { file },
   }));
 }
 
@@ -41,7 +46,7 @@ if (isCharacter) {
   const characterName = frontmatter.name || title;
   const xpSpent = frontmatter.xp_spent || 0;
   const xpAdded = frontmatter.xp_added || 0;
-  
+
   const stats = [
     { name: 'edge', value: frontmatter.edge || 0 },
     { name: 'heart', value: frontmatter.heart || 0 },
@@ -49,34 +54,47 @@ if (isCharacter) {
     { name: 'shadow', value: frontmatter.shadow || 0 },
     { name: 'wits', value: frontmatter.wits || 0 },
   ];
-  
+
   const meters = [
     { name: 'health', value: frontmatter.health || 5 },
     { name: 'spirit', value: frontmatter.spirit || 5 },
     { name: 'supply', value: frontmatter.supply || 5 },
   ];
-  
+
   const momentum = frontmatter.momentum || 0;
-  
+
   // Special tracks (legacy tracks)
   const specialTracks = [
-    { name: 'Quests', progress: frontmatter.Quests_Progress || 0, xp: frontmatter.Quests_XPEarned || 0 },
-    { name: 'Bonds', progress: frontmatter.Bonds_Progress || 0, xp: frontmatter.Bonds_XPEarned || 0 },
-    { name: 'Discoveries', progress: frontmatter.Discoveries_Progress || 0, xp: frontmatter.Discoveries_XPEarned || 0 },
+    {
+      name: 'Quests',
+      progress: frontmatter.Quests_Progress || 0,
+      xp: frontmatter.Quests_XPEarned || 0,
+    },
+    {
+      name: 'Bonds',
+      progress: frontmatter.Bonds_Progress || 0,
+      xp: frontmatter.Bonds_XPEarned || 0,
+    },
+    {
+      name: 'Discoveries',
+      progress: frontmatter.Discoveries_Progress || 0,
+      xp: frontmatter.Discoveries_XPEarned || 0,
+    },
   ];
-  
+
   // Calculate XP from tracks
-  const xpFromTracks = (frontmatter.Quests_XPEarned || 0) + 
-                       (frontmatter.Bonds_XPEarned || 0) + 
-                       (frontmatter.Discoveries_XPEarned || 0);
+  const xpFromTracks =
+    (frontmatter.Quests_XPEarned || 0) +
+    (frontmatter.Bonds_XPEarned || 0) +
+    (frontmatter.Discoveries_XPEarned || 0);
   const totalXp = xpFromTracks + xpAdded;
-  
+
   // Character info fields from frontmatter
   const callsign = frontmatter.callsign || '';
   const pronouns = frontmatter.pronouns || '';
   const description = frontmatter.description || '';
   const player = frontmatter.player || '';
-  
+
   // Character Info HTML - matches the CSS grid layout
   const characterInfoHtml = `
     <section class="iron-vault-character">
@@ -103,43 +121,51 @@ if (isCharacter) {
       </section>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-info-placeholder"></div>',
     characterInfoHtml
   );
-  
+
   // Stats HTML
-  const statsHtml = stats.map(s => `
+  const statsHtml = stats
+    .map(
+      (s) => `
     <li>
       <dl>
         <dt data-value="${s.name}">${s.name}</dt>
         <dd><input type="text" inputmode="numeric" value="${s.value}" readonly /></dd>
       </dl>
     </li>
-  `).join('');
-  
+  `
+    )
+    .join('');
+
   const characterStatsHtml = `
     <section class="iron-vault-character">
       <ul class="stats">${statsHtml}</ul>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-stats-placeholder"></div>',
     characterStatsHtml
   );
-  
+
   // Meters HTML
-  const metersHtml = meters.map(m => `
+  const metersHtml = meters
+    .map(
+      (m) => `
     <li>
       <dl>
         <dt data-value="${m.name}">${m.name}</dt>
         <dd data-value="${m.value}"><span>${m.value}</span></dd>
       </dl>
     </li>
-  `).join('');
-  
+  `
+    )
+    .join('');
+
   const characterMetersHtml = `
     <section class="iron-vault-character">
       <ul class="meters">
@@ -153,12 +179,12 @@ if (isCharacter) {
       </ul>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-meters-placeholder"></div>',
     characterMetersHtml
   );
-  
+
   // Special Tracks HTML (legacy tracks with progress boxes)
   const getBoxValue = (ticks: number, boxIndex: number): number => {
     const fullBoxes = Math.floor(ticks / 4);
@@ -167,13 +193,15 @@ if (isCharacter) {
     if (boxIndex === fullBoxes) return remainingTicks;
     return 0;
   };
-  
-  const specialTracksHtml = specialTracks.map(track => {
-    const boxesHtml = Array.from({ length: 10 }, (_, i) => 
-      `<li data-value="${getBoxValue(track.progress, i)}"></li>`
-    ).join('');
-    
-    return `
+
+  const specialTracksHtml = specialTracks
+    .map((track) => {
+      const boxesHtml = Array.from(
+        { length: 10 },
+        (_, i) => `<li data-value="${getBoxValue(track.progress, i)}"></li>`
+      ).join('');
+
+      return `
       <div class="iron-vault-track" data-track="${track.name.toLowerCase()}">
         <span class="track-name">${track.name}</span>
         <span class="track-xp">${track.xp}</span>
@@ -182,8 +210,9 @@ if (isCharacter) {
         </div>
       </div>
     `;
-  }).join('');
-  
+    })
+    .join('');
+
   const characterSpecialTracksHtml = `
     <section class="iron-vault-character">
       <ul class="special-tracks">
@@ -191,12 +220,12 @@ if (isCharacter) {
       </ul>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-special-tracks-placeholder"></div>',
     characterSpecialTracksHtml
   );
-  
+
   // Impacts HTML - read from frontmatter
   const impacts = {
     // Misfortunes
@@ -214,9 +243,9 @@ if (isCharacter) {
     battered: frontmatter.battered || false,
     cursed: frontmatter.cursed || false,
   };
-  
-  const checkedAttr = (val: boolean) => val ? 'checked' : '';
-  
+
+  const checkedAttr = (val: boolean) => (val ? 'checked' : '');
+
   const characterImpactsHtml = `
     <section class="iron-vault-character">
       <ul class="impact-categories">
@@ -253,27 +282,28 @@ if (isCharacter) {
       </ul>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-impacts-placeholder"></div>',
     characterImpactsHtml
   );
-  
+
   // Assets HTML - render full asset cards from Datasworn data
   const characterAssetData: CharacterAsset[] = frontmatter.assets || [];
   const mergedAssets = getCharacterAssets(characterAssetData);
-  
+
   const renderAssetCard = (merged: MergedAsset): string => {
     const { definition, state } = merged;
-    
-    // Get custom name from options if available
-    const customName = state.options?.name || '';
-    
+
+    // Get custom name from options if available (unused but kept for future use)
+    // const customName = state.options?.name || '';
+
     // Render abilities with enabled state from character
-    const abilitiesHtml = definition.abilities.map((ability, index) => {
-      const isEnabled = state.abilities[index] || false;
-      const abilityText = convertDataswornLinks(ability.text);
-      return `
+    const abilitiesHtml = definition.abilities
+      .map((ability, index) => {
+        const isEnabled = state.abilities[index] || false;
+        const abilityText = convertDataswornLinks(ability.text);
+        return `
         <li>
           <label>
             <input type="checkbox" ${isEnabled ? 'checked' : ''} disabled />
@@ -281,14 +311,16 @@ if (isCharacter) {
           </label>
         </li>
       `;
-    }).join('');
-    
+      })
+      .join('');
+
     // Render options (like custom name)
     let optionsHtml = '';
     if (definition.options && Object.keys(definition.options).length > 0) {
-      const optionItems = Object.entries(definition.options).map(([key, opt]) => {
-        const value = state.options?.[key] || '';
-        return `
+      const optionItems = Object.entries(definition.options)
+        .map(([key, opt]) => {
+          const value = state.options?.[key] || '';
+          return `
           <li>
             <label>
               <span>${opt.label?.toUpperCase() || key.toUpperCase()}</span>
@@ -296,50 +328,54 @@ if (isCharacter) {
             </label>
           </li>
         `;
-      }).join('');
+        })
+        .join('');
       optionsHtml = `<div class="options"><ul>${optionItems}</ul></div>`;
     }
-    
+
     // Render controls (like integrity, health, command)
     let controlsHtml = '';
     if (definition.controls && Object.keys(definition.controls).length > 0) {
-      const controlItems = Object.entries(definition.controls).map(([key, ctrl]) => {
-        // Skip nested controls (like battered/cursed which are under integrity)
-        if (key.includes('/')) return '';
-        
-        const currentValue = state.controls?.[key] ?? ctrl.value;
-        
-        if (ctrl.field_type === 'condition_meter') {
-          // Render as a meter with buttons
-          const max = ctrl.max || 5;
-          const min = ctrl.min || 0;
-          const meterItems = Array.from({ length: max - min + 1 }, (_, i) => {
-            const val = min + i;
-            const isSelected = val === currentValue;
-            return `<li${isSelected ? ' class="selected"' : ''}><label><span>${val}</span></label></li>`;
-          }).join('');
-          
-          // Check for nested impact controls (battered, cursed, etc.)
-          let impactControls = '';
-          if (ctrl.controls) {
-            const impactItems = Object.entries(ctrl.controls).map(([impactKey, impactCtrl]: [string, any]) => {
-              const impactValue = state.controls?.[`${key}/${impactKey}`] || false;
-              const label = impactCtrl.label || impactKey;
-              return `<span class="impact-control"><label><input type="checkbox" ${impactValue ? 'checked' : ''} disabled /><span>${label.toUpperCase()}</span></label></span>`;
-            }).join(' ');
-            impactControls = `<div class="meter-impacts">${impactItems}</div>`;
-          }
-          
-          return `
+      const controlItems = Object.entries(definition.controls)
+        .map(([key, ctrl]) => {
+          // Skip nested controls (like battered/cursed which are under integrity)
+          if (key.includes('/')) return '';
+
+          const currentValue = state.controls?.[key] ?? ctrl.value;
+
+          if (ctrl.field_type === 'condition_meter') {
+            // Render as a meter with buttons
+            const max = ctrl.max || 5;
+            const min = ctrl.min || 0;
+            const meterItems = Array.from({ length: max - min + 1 }, (_, i) => {
+              const val = min + i;
+              const isSelected = val === currentValue;
+              return `<li${isSelected ? ' class="selected"' : ''}><label><span>${val}</span></label></li>`;
+            }).join('');
+
+            // Check for nested impact controls (battered, cursed, etc.)
+            let impactControls = '';
+            if (ctrl.controls) {
+              const impactItems = Object.entries(ctrl.controls)
+                .map(([impactKey, impactCtrl]: [string, { label?: string }]) => {
+                  const impactValue = state.controls?.[`${key}/${impactKey}`] || false;
+                  const label = impactCtrl.label || impactKey;
+                  return `<span class="impact-control"><label><input type="checkbox" ${impactValue ? 'checked' : ''} disabled /><span>${label.toUpperCase()}</span></label></span>`;
+                })
+                .join(' ');
+              impactControls = `<div class="meter-impacts">${impactItems}</div>`;
+            }
+
+            return `
             <li class="condition-meter">
               ${impactControls}
               <span class="meter-label">${ctrl.label?.toUpperCase() || key.toUpperCase()}</span>
               <ul class="meter">${meterItems}</ul>
             </li>
           `;
-        } else if (ctrl.field_type === 'checkbox') {
-          const isChecked = state.controls?.[key] || false;
-          return `
+          } else if (ctrl.field_type === 'checkbox') {
+            const isChecked = state.controls?.[key] || false;
+            return `
             <li>
               <label>
                 <input type="checkbox" ${isChecked ? 'checked' : ''} disabled />
@@ -347,17 +383,19 @@ if (isCharacter) {
               </label>
             </li>
           `;
-        }
-        return '';
-      }).filter(Boolean).join('');
-      
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('');
+
       if (controlItems) {
         controlsHtml = `<ul class="controls">${controlItems}</ul>`;
       }
     }
-    
+
     const sourceTitle = definition._source?.title || 'Ironsworn';
-    
+
     return `
       <article class="iron-vault-asset-card">
         <header>
@@ -377,9 +415,9 @@ if (isCharacter) {
       </article>
     `;
   };
-  
+
   const assetCardsHtml = mergedAssets.map(renderAssetCard).join('');
-  
+
   const characterAssetsHtml = `
     <section class="iron-vault-character assets">
       <ul>
@@ -387,7 +425,7 @@ if (isCharacter) {
       </ul>
     </section>
   `;
-  
+
   htmlContent = htmlContent.replace(
     '<div class="iron-vault-character-assets-placeholder"></div>',
     characterAssetsHtml
@@ -395,32 +433,36 @@ if (isCharacter) {
 }
 
 // Progress track data
-const trackData = isProgressTrack ? {
-  name: frontmatter.name || title,
-  rank: frontmatter.rank || 'dangerous',
-  progress: frontmatter.progress || 0,
-  trackType: frontmatter['track-type'] || 'Vow',
-  complete: frontmatter.tags?.includes('complete') || false,
-} : null;
+const trackData = isProgressTrack
+  ? {
+      name: frontmatter.name || title,
+      rank: frontmatter.rank || 'dangerous',
+      progress: frontmatter.progress || 0,
+      trackType: frontmatter['track-type'] || 'Vow',
+      complete: frontmatter.tags?.includes('complete') || false,
+    }
+  : null;
 
 // Generate progress track HTML and replace placeholder
 if (isProgressTrack && trackData) {
   const ticks = trackData.progress;
   const fullBoxes = Math.floor(ticks / 4);
   const remainingTicks = ticks % 4;
-  
+
   const getBoxValue = (boxIndex: number): number => {
     if (boxIndex < fullBoxes) return 4;
     if (boxIndex === fullBoxes) return remainingTicks;
     return 0;
   };
-  
-  const displayRank = trackData.rank.charAt(0).toUpperCase() + trackData.rank.slice(1).toLowerCase();
-  
-  const boxesHtml = Array.from({ length: 10 }, (_, i) => 
-    `<li data-value="${getBoxValue(i)}">${getBoxValue(i)}</li>`
+
+  const displayRank =
+    trackData.rank.charAt(0).toUpperCase() + trackData.rank.slice(1).toLowerCase();
+
+  const boxesHtml = Array.from(
+    { length: 10 },
+    (_, i) => `<li data-value="${getBoxValue(i)}">${getBoxValue(i)}</li>`
   ).join('');
-  
+
   const trackHtml = `
     <div class="iron-vault-track" data-rank="${trackData.rank}" data-complete="${trackData.complete}">
       <span class="track-type">${trackData.trackType.toUpperCase()}</span>
@@ -432,21 +474,18 @@ if (isProgressTrack && trackData) {
       <div class="track-progress">${fullBoxes}/10 (${ticks} ticks)</div>
     </div>
   `;
-  
-  htmlContent = htmlContent.replace(
-    '<div class="iron-vault-track-placeholder"></div>',
-    trackHtml
-  );
+
+  htmlContent = htmlContent.replace('<div class="iron-vault-track-placeholder"></div>', trackHtml);
 }
 ---
 
 <Layout title={title}>
   <MobileHeader slug={actualSlug} />
   <Sidebar />
-  
+
   <main class="content">
     <Breadcrumbs slug={actualSlug} />
-    
+
     <article class="page">
       <div class="prose" set:html={htmlContent} />
     </article>

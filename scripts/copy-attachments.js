@@ -15,10 +15,10 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 
 function copyAttachments(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
-    
+
     if (entry.isDirectory()) {
       if (entry.name === 'attachments') {
         // Copy all files from attachments folder
@@ -28,7 +28,7 @@ function copyAttachments(dir) {
           // Normalize filename: lowercase and replace spaces with hyphens
           const normalizedName = file.toLowerCase().replace(/\s+/g, '-');
           const destPath = path.join(OUTPUT_DIR, normalizedName);
-          
+
           if (fs.statSync(srcPath).isFile()) {
             fs.copyFileSync(srcPath, destPath);
             console.log(`Copied: ${srcPath} -> ${destPath}`);

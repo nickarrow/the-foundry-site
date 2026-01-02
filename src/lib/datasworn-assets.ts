@@ -1,6 +1,6 @@
 /**
  * Datasworn Asset Lookup
- * 
+ *
  * Loads asset definitions from Datasworn packages and provides
  * lookup functionality for rendering asset cards.
  */
@@ -22,7 +22,7 @@ export interface AssetControl {
   value: number | boolean;
   min?: number;
   max?: number;
-  controls?: Record<string, any>;
+  controls?: Record<string, { label?: string; value?: boolean }>;
 }
 
 export interface AssetOption {
@@ -64,14 +64,16 @@ export interface MergedAsset {
 // Build a flat lookup map of all assets by ID
 const assetMap = new Map<string, AssetDefinition>();
 
-function indexAssets(data: any, prefix: string) {
+function indexAssets(data: {
+  assets?: Record<string, { contents?: Record<string, AssetDefinition> }>;
+}) {
   if (!data.assets) return;
-  
-  for (const [categoryKey, category] of Object.entries(data.assets as Record<string, any>)) {
+
+  for (const category of Object.values(data.assets)) {
     if (category.contents) {
-      for (const [assetKey, asset] of Object.entries(category.contents as Record<string, any>)) {
+      for (const asset of Object.values(category.contents)) {
         if (asset._id) {
-          assetMap.set(asset._id, asset as AssetDefinition);
+          assetMap.set(asset._id, asset);
         }
       }
     }
@@ -79,9 +81,15 @@ function indexAssets(data: any, prefix: string) {
 }
 
 // Index all assets from all rulesets
-indexAssets(starforgedData, 'starforged');
-indexAssets(sunderedIslesData, 'sundered_isles');
-indexAssets(ironswornData, 'classic');
+indexAssets(
+  starforgedData as { assets?: Record<string, { contents?: Record<string, AssetDefinition> }> }
+);
+indexAssets(
+  sunderedIslesData as { assets?: Record<string, { contents?: Record<string, AssetDefinition> }> }
+);
+indexAssets(
+  ironswornData as { assets?: Record<string, { contents?: Record<string, AssetDefinition> }> }
+);
 
 /**
  * Look up an asset definition by its ID
@@ -99,7 +107,7 @@ export function mergeAssetWithState(characterAsset: CharacterAsset): MergedAsset
     console.warn(`Asset not found: ${characterAsset.id}`);
     return null;
   }
-  
+
   return {
     definition,
     state: characterAsset,
@@ -110,9 +118,7 @@ export function mergeAssetWithState(characterAsset: CharacterAsset): MergedAsset
  * Get all merged assets for a character
  */
 export function getCharacterAssets(assets: CharacterAsset[]): MergedAsset[] {
-  return assets
-    .map(mergeAssetWithState)
-    .filter((a): a is MergedAsset => a !== null);
+  return assets.map(mergeAssetWithState).filter((a): a is MergedAsset => a !== null);
 }
 
 /**

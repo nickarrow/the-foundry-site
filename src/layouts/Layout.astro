@@ -6,7 +6,7 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -23,23 +23,24 @@ const { title } = Astro.props;
     </div>
     <script is:inline>
       // Initialize Pagefind search after page loads
-      window.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('DOMContentLoaded', function () {
         // Load Pagefind UI script dynamically
-        var script = document.createElement('script');
+        const script = document.createElement('script');
         script.src = '/the-foundry-site/pagefind/pagefind-ui.js';
-        script.onload = function() {
+        script.onload = function () {
           new PagefindUI({
             element: '#search-container',
             showSubResults: true,
             showImages: false,
-            resetStyles: false
+            resetStyles: false,
           });
         };
-        script.onerror = function() {
+        script.onerror = function () {
           // Pagefind not available - show fallback
-          var container = document.getElementById('search-container');
+          const container = document.getElementById('search-container');
           if (container) {
-            container.innerHTML = '<input type="text" placeholder="Search..." disabled style="width:100%;padding:0.5rem 0.75rem;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-muted);font-size:0.9rem;cursor:not-allowed;" />';
+            container.innerHTML =
+              '<input type="text" placeholder="Search..." disabled style="width:100%;padding:0.5rem 0.75rem;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-muted);font-size:0.9rem;cursor:not-allowed;" />';
           }
         };
         document.head.appendChild(script);
@@ -48,9 +49,8 @@ const { title } = Astro.props;
     <script>
       // Mobile sidebar toggle
       document.addEventListener('DOMContentLoaded', () => {
-        const toggle = document.querySelector('.mobile-menu-toggle');
         const sidebar = document.querySelector('.sidebar');
-        
+
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
           if (window.innerWidth <= 768) {
@@ -61,11 +61,12 @@ const { title } = Astro.props;
             }
           }
         });
-        
+
         // Restore folder states from localStorage
         const savedStates = JSON.parse(localStorage.getItem('sidebarFolderStates') || '{}');
         document.querySelectorAll('.nav-folder').forEach((folder, index) => {
-          const title = folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
+          const title =
+            folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
           if (savedStates[title] === 'expanded') {
             folder.classList.remove('collapsed');
           } else if (savedStates[title] === 'collapsed') {
@@ -73,61 +74,66 @@ const { title } = Astro.props;
           }
           // If no saved state, keep the default (collapsed)
         });
-        
+
         // Save folder state on toggle
         function saveFolderStates() {
           const states: Record<string, string> = {};
           document.querySelectorAll('.nav-folder').forEach((folder, index) => {
-            const title = folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
+            const title =
+              folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
             states[title] = folder.classList.contains('collapsed') ? 'collapsed' : 'expanded';
           });
           localStorage.setItem('sidebarFolderStates', JSON.stringify(states));
         }
-        
+
         // Collapsible nav folders
-        document.querySelectorAll('.nav-folder > .nav-folder-title').forEach(title => {
+        document.querySelectorAll('.nav-folder > .nav-folder-title').forEach((title) => {
           title.addEventListener('click', () => {
             title.parentElement?.classList.toggle('collapsed');
             saveFolderStates();
             updateToggleIcon();
           });
         });
-        
+
         // Toggle all folders button (single button that switches icons)
         const toggleBtn = document.querySelector('.toggle-all-folders');
         const iconExpand = toggleBtn?.querySelector('.icon-expand') as HTMLElement;
         const iconCollapse = toggleBtn?.querySelector('.icon-collapse') as HTMLElement;
-        
+
         function updateToggleIcon() {
           const allFolders = document.querySelectorAll('.nav-folder');
-          const allCollapsed = Array.from(allFolders).every(f => f.classList.contains('collapsed'));
-          
+          const allCollapsed = Array.from(allFolders).every((f) =>
+            f.classList.contains('collapsed')
+          );
+
           if (iconExpand && iconCollapse) {
             // Show expand icon when all are collapsed, collapse icon when any are expanded
             iconExpand.style.display = allCollapsed ? 'block' : 'none';
             iconCollapse.style.display = allCollapsed ? 'none' : 'block';
           }
         }
-        
+
         toggleBtn?.addEventListener('click', () => {
           const allFolders = document.querySelectorAll('.nav-folder');
-          const allCollapsed = Array.from(allFolders).every(f => f.classList.contains('collapsed'));
-          
+          const allCollapsed = Array.from(allFolders).every((f) =>
+            f.classList.contains('collapsed')
+          );
+
           if (allCollapsed) {
             // Expand all
-            allFolders.forEach(folder => folder.classList.remove('collapsed'));
+            allFolders.forEach((folder) => folder.classList.remove('collapsed'));
           } else {
             // Collapse all
-            allFolders.forEach(folder => folder.classList.add('collapsed'));
+            allFolders.forEach((folder) => folder.classList.add('collapsed'));
           }
-          
+
           updateToggleIcon();
           saveFolderStates();
         });
-        
+
         // Update icon on initial load
         updateToggleIcon();
-        
+
         // Auto-expand folders containing the active page
         const activeItem = document.querySelector('.nav-item.active');
         if (activeItem) {
@@ -139,25 +145,25 @@ const { title } = Astro.props;
             parent = parent.parentElement;
           }
           saveFolderStates();
-          
+
           // Scroll active item into view
           activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
         }
-        
+
         // Collapsible callouts - toggle on title click
-        document.querySelectorAll('.callout.is-collapsible .callout-title').forEach(title => {
+        document.querySelectorAll('.callout.is-collapsible .callout-title').forEach((title) => {
           title.addEventListener('click', () => {
             const callout = title.closest('.callout');
             const content = callout?.querySelector('.callout-content') as HTMLElement;
             const fold = callout?.querySelector('.callout-fold');
-            
+
             if (callout && content) {
               const isCollapsed = callout.classList.toggle('is-collapsed');
               content.style.display = isCollapsed ? 'none' : 'block';
               fold?.classList.toggle('is-collapsed', isCollapsed);
             }
           });
-          
+
           // Make title look clickable
           (title as HTMLElement).style.cursor = 'pointer';
         });

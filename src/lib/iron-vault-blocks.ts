@@ -6,11 +6,11 @@
 export function parseIronVaultBlock(content: string, baseUrl: string = ''): string {
   const lines = content.trim().split('\n');
   const results: string[] = [];
-  
+
   let i = 0;
   while (i < lines.length) {
     const line = lines[i].trim();
-    
+
     if (line.startsWith('move ')) {
       // Collect all lines until closing brace (move blocks can span multiple lines)
       const moveLines = [line];
@@ -36,31 +36,34 @@ export function parseIronVaultBlock(content: string, baseUrl: string = ''): stri
     } else if (line.startsWith('track ')) {
       results.push(parseTrackBlock(line, baseUrl));
     }
-    
+
     i++;
   }
-  
+
   return `<div class="iron-vault-mechanics">${results.join('')}</div>`;
 }
 
 function parseMoveBlock(line: string): string {
   // move "[Name](datasworn:...)" { roll "Stat" action=X adds=X stat=X vs1=X vs2=X }
   const nameMatch = line.match(/move\s+"([^"]+)"/);
-  const rollMatch = line.match(/roll\s+"([^"]+)"\s+action=(\d+)\s+adds=(\d+)\s+stat=(\d+)\s+vs1=(\d+)\s+vs2=(\d+)/);
-  
-  if (!nameMatch || !rollMatch) return `<div class="iv-parse-error">Could not parse move: ${escapeHtml(line)}</div>`;
-  
+  const rollMatch = line.match(
+    /roll\s+"([^"]+)"\s+action=(\d+)\s+adds=(\d+)\s+stat=(\d+)\s+vs1=(\d+)\s+vs2=(\d+)/
+  );
+
+  if (!nameMatch || !rollMatch)
+    return `<div class="iv-parse-error">Could not parse move: ${escapeHtml(line)}</div>`;
+
   // Extract just the name from the markdown link
   const fullName = nameMatch[1];
   const name = fullName.replace(/\[([^\]]+)\]\([^)]+\)/, '$1');
-  
+
   const stat = rollMatch[1];
   const action = parseInt(rollMatch[2]);
   const adds = parseInt(rollMatch[3]);
   const statValue = parseInt(rollMatch[4]);
   const vs1 = parseInt(rollMatch[5]);
   const vs2 = parseInt(rollMatch[6]);
-  
+
   const score = action + statValue + adds;
   const outcome = getOutcome(score, vs1, vs2);
   const match = vs1 === vs2;
@@ -86,9 +89,10 @@ function parseOracleBlock(line: string): string {
   const nameMatch = line.match(/name="([^"]+)"/);
   const resultMatch = line.match(/result="([^"]+)"/);
   const rollMatch = line.match(/roll=(\d+)/);
-  
-  if (!nameMatch) return `<div class="iv-parse-error">Could not parse oracle: ${escapeHtml(line)}</div>`;
-  
+
+  if (!nameMatch)
+    return `<div class="iv-parse-error">Could not parse oracle: ${escapeHtml(line)}</div>`;
+
   // Extract just the name from the markdown link
   const fullName = nameMatch[1];
   const name = fullName.replace(/\[([^\]]+)\]\([^)]+\)/, '$1');
@@ -108,16 +112,18 @@ function parseOracleGroupBlock(content: string): string {
   // oracle-group name="Name" { ...oracles... }
   const nameMatch = content.match(/oracle-group\s+name="([^"]+)"/);
   const name = nameMatch ? nameMatch[1] : 'Oracle Group';
-  
+
   // Extract individual oracles
-  const oracleMatches = content.matchAll(/oracle\s+name="([^"]+)"\s+result="([^"]+)"\s+roll=(\d+)/g);
+  const oracleMatches = content.matchAll(
+    /oracle\s+name="([^"]+)"\s+result="([^"]+)"\s+roll=(\d+)/g
+  );
   const oracles: string[] = [];
-  
+
   for (const match of oracleMatches) {
     const oracleName = match[1].replace(/\[([^\]]+)\]\([^)]+\)/, '$1');
     const result = match[2];
     const roll = match[3];
-    
+
     // Note: CSS handles icons via ::before pseudo-elements
     oracles.push(`<dl class="oracle">
       <dt>Oracle</dt>
@@ -137,7 +143,7 @@ function parseTrackBlock(line: string, baseUrl: string): string {
   // track name="[[path|display]]" status="added"
   const nameMatch = line.match(/name="\[\[([^|]+)\|([^\]]+)\]\]"/);
   const statusMatch = line.match(/status="([^"]+)"/);
-  
+
   const path = nameMatch ? nameMatch[1] : '';
   const displayName = nameMatch ? nameMatch[2] : '';
   const status = statusMatch ? statusMatch[1] : 'added';
@@ -158,20 +164,25 @@ function getOutcome(score: number, vs1: number, vs2: number): 'strong-hit' | 'we
 
 function pathToSlug(path: string): string {
   if (!path) return '#';
-  return '/' + path
-    .replace(/\.md$/, '')
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[()]/g, '')
-    .replace(/'/g, '');
+  return (
+    '/' +
+    path
+      .replace(/\.md$/, '')
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[()]/g, '')
+      .replace(/'/g, '')
+  );
 }
 
 function escapeHtml(text: string): string {
-  return text
-    // First unescape escaped forward slashes from Iron Vault syntax
-    .replace(/\\\//g, '/')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return (
+    text
+      // First unescape escaped forward slashes from Iron Vault syntax
+      .replace(/\\\//g, '/')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+  );
 }

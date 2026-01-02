@@ -10,7 +10,7 @@
   
   --text-primary: #dcddde;
   --text-secondary: #a7a9ab;
-  --text-muted: #888888;
+  --text-muted: #888;
   
   --accent-color: #7c3aed;
   --accent-hover: #8b5cf6;
@@ -56,7 +56,7 @@ html, body {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .app {
     flex-direction: column;
   }
@@ -334,14 +334,14 @@ html, body {
   overflow-x: auto;
   margin: 1rem 0;
   white-space: pre-wrap;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose pre code {
   background: none;
   padding: 0;
   white-space: pre-wrap;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .prose img {
@@ -547,7 +547,7 @@ html, body {
 }
 
 /* Mobile responsive */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;

@@ -14,9 +14,9 @@ export default defineConfig({
     css: {
       preprocessorOptions: {
         css: {
-          charset: false
-        }
-      }
-    }
-  }
+          charset: false,
+        },
+      },
+    },
+  },
 });

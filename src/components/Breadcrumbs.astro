@@ -10,7 +10,7 @@ const base = import.meta.env.BASE_URL;
 
 // Get all valid page slugs and build a slug-to-name map
 const allFiles = getAllContentFiles();
-const validSlugs = new Set(allFiles.map(f => f.slug));
+const validSlugs = new Set(allFiles.map((f) => f.slug));
 
 // Build a map of slug -> display name from the navigation tree
 const navTree = buildNavigationTree();
@@ -29,26 +29,24 @@ function mapNavNodes(nodes: NavNode[]) {
 mapNavNodes(navTree);
 
 // Build breadcrumb trail from slug
-const parts = slug ? slug.split('/').filter(p => p) : [];
-const crumbs: { name: string; href: string | null }[] = [
-  { name: 'Home', href: base }
-];
+const parts = slug ? slug.split('/').filter((p) => p) : [];
+const crumbs: { name: string; href: string | null }[] = [{ name: 'Home', href: base }];
 
 let currentPath = '';
 for (const part of parts) {
   currentPath += (currentPath ? '/' : '') + part;
-  
+
   // Look up the actual name from the nav tree, fall back to slug conversion
   let name = slugToName.get(currentPath);
   if (!name) {
     // Fallback: convert slug back to readable name
     name = part
       .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
       .replace(/\d+\.\s*/, '');
   }
-  
+
   // Only make it a link if there's an actual page at this path
   const href = validSlugs.has(currentPath) ? `${base}/${currentPath}` : null;
   crumbs.push({ name, href });
@@ -57,22 +55,24 @@ for (const part of parts) {
 
 <nav class="breadcrumbs" aria-label="Breadcrumb">
   <ol>
-    {crumbs.map((crumb, i) => (
-      <li>
-        {i < crumbs.length - 1 ? (
-          <>
-            {crumb.href ? (
-              <a href={crumb.href}>{crumb.name}</a>
-            ) : (
-              <span class="folder">{crumb.name}</span>
-            )}
-            <span class="separator">/</span>
-          </>
-        ) : (
-          <span class="current">{crumb.name}</span>
-        )}
-      </li>
-    ))}
+    {
+      crumbs.map((crumb, i) => (
+        <li>
+          {i < crumbs.length - 1 ? (
+            <>
+              {crumb.href ? (
+                <a href={crumb.href}>{crumb.name}</a>
+              ) : (
+                <span class="folder">{crumb.name}</span>
+              )}
+              <span class="separator">/</span>
+            </>
+          ) : (
+            <span class="current">{crumb.name}</span>
+          )}
+        </li>
+      ))
+    }
   </ol>
 </nav>
 
@@ -92,18 +92,18 @@ for (const part of parts) {
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
   }
-  
+
   .breadcrumbs.scrolled {
     border-bottom-color: var(--border-color);
   }
-  
+
   /* Hide on mobile - MobileHeader handles breadcrumbs there */
   @media (max-width: 768px) {
     .breadcrumbs {
       display: none;
     }
   }
-  
+
   ol {
     display: flex;
     flex-wrap: wrap;
@@ -112,31 +112,31 @@ for (const part of parts) {
     margin: 0;
     gap: 0.25rem;
   }
-  
+
   li {
     display: flex;
     align-items: center;
     gap: 0.25rem;
   }
-  
+
   a {
     color: var(--link-color);
     text-decoration: none;
   }
-  
+
   a:hover {
     text-decoration: underline;
   }
-  
+
   .separator {
     color: var(--text-muted);
     opacity: 0.5;
   }
-  
+
   .folder {
     color: var(--text-secondary);
   }
-  
+
   .current {
     color: var(--text-primary);
   }
@@ -152,7 +152,7 @@ for (const part of parts) {
       },
       { threshold: 1, rootMargin: '-1px 0px 0px 0px' }
     );
-    
+
     // Create a sentinel element at the top of the content
     const sentinel = document.createElement('div');
     sentinel.style.height = '1px';

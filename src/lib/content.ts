@@ -9,27 +9,27 @@ import type { ContentFile } from './dataview';
 
 const CONTENT_DIR = 'content';
 const EXCLUDED_PATTERNS = [
-  /^\./,           // Hidden files/folders
-  /\.excalidraw\.md$/,  // Excalidraw files
-  /\.base$/,       // Base files
-  /^README\.md$/,  // Root README
+  /^\./, // Hidden files/folders
+  /\.excalidraw\.md$/, // Excalidraw files
+  /\.base$/, // Base files
+  /^README\.md$/, // Root README
 ];
 
 export function getAllContentFiles(): ContentFile[] {
   const files: ContentFile[] = [];
-  
+
   function walkDir(dir: string, relativePath: string = '') {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       const relPath = path.join(relativePath, entry.name);
-      
+
       // Skip excluded patterns
-      if (EXCLUDED_PATTERNS.some(p => p.test(entry.name))) {
+      if (EXCLUDED_PATTERNS.some((p) => p.test(entry.name))) {
         continue;
       }
-      
+
       if (entry.isDirectory()) {
         // Skip hidden directories
         if (!entry.name.startsWith('.')) {
@@ -38,66 +38,72 @@ export function getAllContentFiles(): ContentFile[] {
       } else if (entry.name.endsWith('.md')) {
         const content = fs.readFileSync(fullPath, 'utf-8');
         const { data: frontmatter, content: body } = matter(content);
-        
+
         const title = extractTitle(body, entry.name);
         const slug = pathToSlug(relPath);
-        
+
         files.push({
           path: relPath,
           slug,
           title,
-          frontmatter
+          frontmatter,
         });
       }
     }
   }
-  
+
   walkDir(CONTENT_DIR);
   return files;
 }
 
-export function getContentFile(slug: string): { frontmatter: Record<string, any>; content: string; title: string } | null {
+export function getContentFile(
+  slug: string
+): { frontmatter: Record<string, unknown>; content: string; title: string } | null {
   const files = getAllContentFiles();
-  const file = files.find(f => f.slug === slug);
-  
+  const file = files.find((f) => f.slug === slug);
+
   if (!file) return null;
-  
+
   const fullPath = path.join(CONTENT_DIR, file.path);
   const raw = fs.readFileSync(fullPath, 'utf-8');
   const { data: frontmatter, content } = matter(raw);
   const title = extractTitle(content, path.basename(file.path));
-  
+
   return { frontmatter, content, title };
 }
 
-export function getFileByPath(filePath: string): { frontmatter: Record<string, any>; content: string } | null {
+export function getFileByPath(
+  filePath: string
+): { frontmatter: Record<string, unknown>; content: string } | null {
   const fullPath = path.join(CONTENT_DIR, filePath);
-  
+
   if (!fs.existsSync(fullPath)) return null;
-  
+
   const raw = fs.readFileSync(fullPath, 'utf-8');
   const { data: frontmatter, content } = matter(raw);
-  
+
   return { frontmatter, content };
 }
 
-export function getFileContentByName(name: string): { content: string; title: string; path: string } | null {
+export function getFileContentByName(
+  name: string
+): { content: string; title: string; path: string } | null {
   const files = getAllContentFiles();
   const lookupKey = name.toLowerCase().trim();
-  
+
   // Try to find by title or filename
-  const file = files.find(f => {
+  const file = files.find((f) => {
     const title = f.title.toLowerCase();
     const filename = f.path.split(/[/\\]/).pop()?.replace(/\.md$/, '').toLowerCase() || '';
     return title === lookupKey || filename === lookupKey;
   });
-  
+
   if (!file) return null;
-  
+
   const fullPath = path.join(CONTENT_DIR, file.path);
   const raw = fs.readFileSync(fullPath, 'utf-8');
   const { content } = matter(raw);
-  
+
   return { content, title: file.title, path: file.path };
 }
 
@@ -109,7 +115,7 @@ function extractTitle(content: string, filename: string): string {
 
 export function pathToSlug(filePath: string): string {
   return filePath
-    .replace(/\\/g, '/')  // Normalize Windows paths
+    .replace(/\\/g, '/') // Normalize Windows paths
     .replace(/\.md$/, '')
     .toLowerCase()
     .replace(/\s+/g, '-')
@@ -119,32 +125,32 @@ export function pathToSlug(filePath: string): string {
 
 export function slugToPath(slug: string): string | null {
   const files = getAllContentFiles();
-  const file = files.find(f => f.slug === slug);
+  const file = files.find((f) => f.slug === slug);
   return file?.path || null;
 }
 
 export function buildNavigationTree(): NavNode[] {
   const files = getAllContentFiles();
   const tree: NavNode[] = [];
-  
+
   // Collect all unique directory paths (including intermediate ones)
   const allDirs = new Set<string>();
-  
+
   // Group files by directory
   const byDir = new Map<string, ContentFile[]>();
-  
+
   for (const file of files) {
     // Normalize path separators
     const normalizedPath = file.path.replace(/\\/g, '/');
-    const dir = normalizedPath.includes('/') 
+    const dir = normalizedPath.includes('/')
       ? normalizedPath.substring(0, normalizedPath.lastIndexOf('/'))
       : '.';
-    
+
     if (!byDir.has(dir)) {
       byDir.set(dir, []);
     }
     byDir.get(dir)!.push(file);
-    
+
     // Add all parent directories to allDirs
     const parts = dir.split('/');
     let currentPath = '';
@@ -155,31 +161,31 @@ export function buildNavigationTree(): NavNode[] {
       }
     }
   }
-  
+
   // Ensure all directories are in byDir (even if empty)
   for (const dir of allDirs) {
     if (!byDir.has(dir)) {
       byDir.set(dir, []);
     }
   }
-  
+
   // Build tree structure
   function buildNode(dirPath: string): NavNode {
     // Normalize for display
     const normalizedDir = dirPath.replace(/\\/g, '/');
     const name = normalizedDir === '.' ? 'Home' : normalizedDir.split('/').pop() || dirPath;
     const children: NavNode[] = [];
-    
+
     // Add files in this directory
     const dirFiles = byDir.get(dirPath) || [];
     for (const file of dirFiles) {
       children.push({
         name: file.title,
         slug: file.slug,
-        children: []
+        children: [],
       });
     }
-    
+
     // Add subdirectories
     for (const subDir of allDirs) {
       const normalizedSubDir = subDir.replace(/\\/g, '/');
@@ -190,7 +196,7 @@ export function buildNavigationTree(): NavNode[] {
         children.push(buildNode(subDir));
       }
     }
-    
+
     // Sort: directories first, then alphabetically
     children.sort((a, b) => {
       const aIsDir = a.children.length > 0;
@@ -199,26 +205,26 @@ export function buildNavigationTree(): NavNode[] {
       if (!aIsDir && bIsDir) return 1;
       return a.name.localeCompare(b.name);
     });
-    
+
     return {
       name,
       slug: normalizedDir === '.' ? '' : pathToSlug(normalizedDir),
-      children
+      children,
     };
   }
-  
+
   // Start from root
   const rootFiles = byDir.get('.') || [];
-  
+
   // Add root-level files
   for (const file of rootFiles) {
     tree.push({
       name: file.title,
       slug: file.slug,
-      children: []
+      children: [],
     });
   }
-  
+
   // Add top-level directories
   for (const dir of allDirs) {
     // Normalize path separators for cross-platform compatibility
@@ -227,7 +233,7 @@ export function buildNavigationTree(): NavNode[] {
       tree.push(buildNode(dir));
     }
   }
-  
+
   // Sort root level
   tree.sort((a, b) => {
     const aIsDir = a.children.length > 0;
@@ -236,7 +242,7 @@ export function buildNavigationTree(): NavNode[] {
     if (!aIsDir && bIsDir) return 1;
     return a.name.localeCompare(b.name);
   });
-  
+
   return tree;
 }
 

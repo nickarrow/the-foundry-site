@@ -8,7 +8,12 @@
     "build": "astro build",
     "postbuild": "npx pagefind --site dist --output-path dist/pagefind",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "eslint . && stylelint \"**/*.css\"",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint \"**/*.css\"",
+    "format": "prettier --write \"**/*.{js,mjs,ts,astro,json}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs,ts,astro,json}\""
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",
@@ -28,7 +33,17 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^9.39.2",
+    "eslint-plugin-astro": "^1.5.0",
+    "globals": "^17.0.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.1",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.51.0"
   }
 }

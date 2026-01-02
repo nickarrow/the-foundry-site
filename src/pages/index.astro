@@ -20,7 +20,7 @@ const htmlContent = await processMarkdown(content, allFiles, baseUrl);
 <Layout title={title}>
   <MobileHeader slug="" />
   <Sidebar />
-  
+
   <main class="content">
     <article class="page">
       <div class="prose" set:html={htmlContent} />

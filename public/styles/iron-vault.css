@@ -16,8 +16,8 @@
   
   /* Text colors */
   --text-normal: #dcddde;
-  --text-muted: #888888;
-  --text-faint: #666666;
+  --text-muted: #888;
+  --text-faint: #666;
   --text-accent: #a78bfa;
   --text-success: #22c55e;
   --text-warning: #f59e0b;
@@ -54,7 +54,7 @@
   
   /* Colors */
   --color-base-30: #404040;
-  --color-base-50: #666666;
+  --color-base-50: #666;
 }
 
 /* ============================================
@@ -112,13 +112,13 @@
     color: var(--text-muted);
     font-weight: var(--font-semibold);
   }
-  & label:has(> input[type=checkbox]) {
+  & label:has(> input[type="checkbox"]) {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     font-weight: var(--font-semibold);
   }
-  & label > input[type=checkbox] {
+  & label > input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
     border: none !important;
@@ -245,7 +245,7 @@
             font-weight: var(--font-semibold);
             padding: 0 0.4em;
           }
-          &:has(> label > input[type=radio]) {
+          &:has(> label > input[type="radio"]) {
             flex-grow: 1;
             background-color: var(--interactive-normal);
             &:hover {
@@ -255,7 +255,7 @@
               border-right: 2px solid var(--background-primary);
             }
           }
-          &:has(> label > input[type=radio]:checked) {
+          &:has(> label > input[type="radio"]:checked) {
             background-color: var(--interactive-accent);
           }
           & > label {
@@ -283,7 +283,7 @@
           padding: 0;
         }
       }
-      & input[type=radio] {
+      & input[type="radio"] {
         appearance: none;
         -webkit-appearance: none;
         margin: 0;
@@ -291,7 +291,7 @@
       }
     }
   }
-  & input[type=number]::-webkit-inner-spin-button {
+  & input[type="number"]::-webkit-inner-spin-button {
     appearance: auto;
     -webkit-appearance: auto;
   }
@@ -362,7 +362,7 @@
   & > header {
     padding: 0.4em;
     & > * {
-      &:before {
+      &::before {
         content: "\1f464";
       }
       margin: 0;
@@ -420,18 +420,18 @@
     flex-flow: row nowrap;
     align-items: center;
   }
-  &.strong-hit summary > :first-child:after {
+  &.strong-hit summary > :first-child::after {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill-rule="evenodd" stroke-miterlimit="10" clip-rule="evenodd" viewBox="0 0 206.19 111.99">%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M2.2 26.35A4.89 4.89 0 0 0 0 30.17v51.65c0 1.4 1 3.12 2.2 3.82l44.74 25.83c1.2.7 3.2.7 4.4 0l44.74-25.83a4.9 4.9 0 0 0 2.2-3.82V30.17c0-1.4-1-3.12-2.2-3.82L51.35.52a4.9 4.9 0 0 0-4.41 0z"/>%0D%0A  <path fill="none" stroke="%2328aae1" stroke-width="7.08" d="M12.69 34.95v42.1l36.45 21.04L85.6 77.04v-42.1L49.14 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="m26.64 55.22 6.52-6.52 11.17 11.18 20.8-20.8 6.51 6.52-27.3 27.32z"/>%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M110.11 26.35a4.89 4.89 0 0 0-2.2 3.82v51.65c0 1.4.99 3.12 2.2 3.82l44.73 25.83c1.21.7 3.2.7 4.41 0l44.73-25.83a4.9 4.9 0 0 0 2.21-3.82V30.17c0-1.4-1-3.12-2.2-3.82L159.24.52c-1.21-.7-3.2-.7-4.4 0z"/>%0D%0A  <path fill="none" stroke="%2328aae1" stroke-width="7.08" d="M120.59 34.95v42.1l36.45 21.04 36.46-21.05v-42.1L157.04 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="m134.54 55.22 6.52-6.52 11.18 11.18 20.8-20.8 6.5 6.52-27.3 27.32z"/>%0D%0A</svg>%0D%0A');
     color: var(--text-success);
   }
-  &.weak-hit summary > :first-child:after {
+  &.weak-hit summary > :first-child::after {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill-rule="evenodd" stroke-miterlimit="10" clip-rule="evenodd" viewBox="0 0 206.19 111.99">%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M2.2 26.35A4.89 4.89 0 0 0 0 30.17v51.65c0 1.4 1 3.12 2.2 3.82l44.74 25.83c1.2.7 3.2.7 4.4 0l44.74-25.83a4.9 4.9 0 0 0 2.2-3.82V30.17c0-1.4-1-3.12-2.2-3.82L51.35.53a4.9 4.9 0 0 0-4.41 0z"/>%0D%0A  <path fill="none" stroke="%2328aae1" stroke-width="7.08" d="M12.69 34.95v42.1l36.45 21.04L85.6 77.05v-42.1L49.14 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="m26.64 55.22 6.52-6.52 11.17 11.18 20.8-20.8 6.51 6.52-27.3 27.32z"/>%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M110.11 26.35a4.89 4.89 0 0 0-2.2 3.82v51.65c0 1.4.99 3.12 2.2 3.82l44.73 25.83c1.21.7 3.2.7 4.41 0l44.73-25.83a4.9 4.9 0 0 0 2.21-3.82V30.17c0-1.4-1-3.12-2.2-3.82L159.24.53c-1.21-.7-3.2-.7-4.4 0z"/>%0D%0A  <path fill="none" stroke="%23ce242b" stroke-width="7.08" d="M120.59 34.95v42.1l36.45 21.04 36.46-21.04v-42.1L157.04 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="m156.71 62.8-11.48 11.48a.47.47 0 0 1-.67 0l-5.8-5.8a.47.47 0 0 1 0-.66l11.5-11.5a.47.47 0 0 0 0-.66l-11.5-11.48a.48.48 0 0 1 0-.67l5.8-5.8a.46.46 0 0 1 .67 0L156.7 49.2c.19.18.48.18.67 0l11.48-11.48a.47.47 0 0 1 .68 0l5.79 5.79c.18.18.18.49 0 .67l-11.49 11.48a.47.47 0 0 0 0 .67l11.49 11.49c.18.18.18.48 0 .66l-5.8 5.8a.48.48 0 0 1-.67 0l-11.48-11.49a.47.47 0 0 0-.67 0"/>%0D%0A</svg>%0D%0A');
   }
-  &.miss summary > :first-child:after {
+  &.miss summary > :first-child::after {
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill-rule="evenodd" stroke-miterlimit="10" clip-rule="evenodd" viewBox="0 0 206.19 111.99">%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M2.2 26.35A4.89 4.89 0 0 0 0 30.17v51.65c0 1.4 1 3.12 2.2 3.82l44.74 25.83c1.2.7 3.2.7 4.4 0l44.74-25.83a4.9 4.9 0 0 0 2.2-3.82V30.17c0-1.4-1-3.12-2.2-3.82L51.35.52a4.9 4.9 0 0 0-4.41 0z"/>%0D%0A  <path fill="none" stroke="%23ce242b" stroke-width="7.08" d="M12.69 34.95v42.1l36.45 21.04L85.6 77.04v-42.1L49.14 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="M48.8 62.8 37.33 74.27a.47.47 0 0 1-.66 0l-5.8-5.8a.47.47 0 0 1 0-.66l11.49-11.5a.47.47 0 0 0 0-.66l-11.5-11.48a.48.48 0 0 1 0-.67l5.8-5.8a.46.46 0 0 1 .67 0l11.48 11.5c.18.18.48.18.66 0l11.49-11.48a.47.47 0 0 1 .67 0l5.79 5.79c.18.18.18.49 0 .67L55.94 55.66a.47.47 0 0 0 0 .67l11.48 11.49c.18.18.18.48 0 .66l-5.8 5.8a.48.48 0 0 1-.66 0L49.47 62.79a.47.47 0 0 0-.66 0"/>%0D%0A  <path fill="%23121b21" fill-rule="nonzero" d="M110.11 26.35a4.89 4.89 0 0 0-2.2 3.82v51.65c0 1.4.99 3.12 2.2 3.82l44.73 25.83c1.21.7 3.2.7 4.41 0l44.73-25.83a4.9 4.9 0 0 0 2.21-3.82V30.17c0-1.4-1-3.12-2.2-3.82L159.24.52c-1.21-.7-3.2-.7-4.4 0z"/>%0D%0A  <path fill="none" stroke="%23ce242b" stroke-width="7.08" d="M120.59 34.95v42.1l36.45 21.04 36.46-21.05v-42.1L157.04 13.9z"/>%0D%0A  <path fill="%23fff" fill-rule="nonzero" d="m156.71 62.8-11.48 11.48a.47.47 0 0 1-.67 0l-5.8-5.8a.47.47 0 0 1 0-.66l11.5-11.5a.47.47 0 0 0 0-.66l-11.5-11.48a.48.48 0 0 1 0-.67l5.8-5.8a.46.46 0 0 1 .67 0L156.7 49.2c.19.18.48.18.67 0l11.48-11.48a.47.47 0 0 1 .68 0l5.79 5.79c.18.18.18.49 0 .67l-11.49 11.48a.47.47 0 0 0 0 .67l11.49 11.49c.18.18.18.48 0 .66l-5.8 5.8a.48.48 0 0 1-.67 0l-11.48-11.49a.47.47 0 0 0-.67 0"/>%0D%0A</svg>%0D%0A');
     color: var(--text-error);
   }
-  &.match summary > :first-child:after {
+  &.match summary > :first-child::after {
     content: "match";
     text-transform: uppercase;
     font-weight: var(--font-bold);
@@ -465,7 +465,7 @@
       padding: 0;
       margin: 0;
     }
-    & > :first-child:after {
+    & > :first-child::after {
       content: " ";
       float: right;
       margin-left: auto;
@@ -479,7 +479,7 @@
 
 /* src/mechanics/css/paragraphs.css */
 .iron-vault-mechanics p {
-  &:before {
+  &::before {
     margin-right: 0.5em;
   }
   &.detail {
@@ -493,7 +493,7 @@
   }
   &.error {
     opacity: 0.825;
-    &:before {
+    &::before {
       content: "\274c";
     }
   }
@@ -501,7 +501,7 @@
     & > :first-child {
       display: inline;
     }
-    &:before {
+    &::before {
       content: "\2795";
     }
   }
@@ -509,7 +509,7 @@
 
 /* src/mechanics/css/oracle-group.css */
 .iron-vault-mechanics .oracle-group {
-  &:before {
+  &::before {
     content: "\1f52e\1f501";
     margin-right: 0.5em;
   }
@@ -529,20 +529,20 @@
   display: flex;
   flex-flow: row wrap;
   gap: var(--item-gap);
-  &:before {
+  &::before {
     margin-right: 0.5em;
   }
-  &:after {
+  &::after {
     font-weight: var(--font-semibold);
     padding-left: 0.5em;
   }
-  &.match.strong-hit:after {
+  &.match.strong-hit::after {
     color: var(--text-success);
   }
-  &.match.miss:after {
+  &.match.miss::after {
     color: var(--text-error);
   }
-  &.match:after {
+  &.match::after {
     content: "match";
     text-transform: uppercase;
     font-weight: var(--font-bold);
@@ -560,10 +560,10 @@
       display: inline;
     }
     &.challenge-die {
-      &:has(~ .challenge-die):before {
+      &:has(~ .challenge-die)::before {
         content: " vs ";
       }
-      &:not(:has(~ .challenge-die)):before {
+      &:not(:has(~ .challenge-die))::before {
         content: " | ";
       }
       &.vs1 {
@@ -574,15 +574,15 @@
       }
     }
     &.score {
-      &:before {
+      &::before {
         content: " = ";
       }
     }
-    &.from:after {
+    &.from::after {
       content: " \2192  ";
     }
-    &:before,
-    &:after {
+    &::before,
+    &::after {
       color: var(--text-muted);
     }
   }
@@ -608,32 +608,32 @@
 
 /* src/mechanics/css/dlist-add.css */
 .iron-vault-mechanics dl.add {
-  &:before {
+  &::before {
     content: "\2795";
   }
   & dd {
     &.amount {
-      &:before {
+      &::before {
         color: var(--text-muted);
       }
       &.positive {
         color: var(--text-success);
-        &:before {
+        &::before {
           content: "Add +";
         }
       }
       &.negative {
         color: var(--text-error);
-        &:before {
+        &::before {
           content: "Subtract -";
         }
       }
     }
     &.from {
-      &:before {
+      &::before {
         content: " (";
       }
-      &:after {
+      &::after {
         content: ")";
       }
     }
@@ -642,20 +642,20 @@
 
 /* src/mechanics/css/dlist-asset.css */
 .iron-vault-mechanics dl.asset {
-  &:before {
+  &::before {
     content: "\1f48e";
   }
-  &:has(.asset-status[data-value=added]) {
+  &:has(.asset-status[data-value="added"]) {
     & dd.asset-status {
       color: var(--text-success);
     }
   }
-  &:has(.asset-status[data-value=removed]) {
+  &:has(.asset-status[data-value="removed"]) {
     & dd.asset-status {
       color: var(--text-error);
     }
   }
-  &:has(.asset-status[data-value=upgraded]) {
+  &:has(.asset-status[data-value="upgraded"]) {
     & dd.asset-status {
       color: var(--text-warning);
     }
@@ -679,11 +679,11 @@
 
 /* src/mechanics/css/dlist-dice-expr.css */
 .iron-vault-mechanics dl.dice-expr {
-  &:before {
+  &::before {
     content: "\1f3b2";
   }
   & dd {
-    &.expr:after {
+    &.expr::after {
       content: " \2192  ";
     }
   }
@@ -691,28 +691,28 @@
 
 /* src/mechanics/css/dlist-roll.css */
 .iron-vault-mechanics dl.roll {
-  &:before {
+  &::before {
     content: "\1f3b2";
   }
-  &.progress .track-name:before {
+  &.progress .track-name::before {
     content: "(progress) ";
   }
   & dd {
-    &.stat:before {
+    &.stat::before {
       content: " + ";
     }
     &.stat-name {
       color: var(--text-muted);
-      &:before {
+      &::before {
         content: " (";
       }
-      &:after {
+      &::after {
         content: ")";
         padding-right: 0;
         margin-right: 0;
       }
     }
-    &.adds:before {
+    &.adds::before {
       content: " + ";
     }
     &.challenge-die {
@@ -728,29 +728,29 @@
 
 /* src/mechanics/css/dlist-reroll.css */
 .iron-vault-mechanics dl.reroll {
-  &:before {
+  &::before {
     content: "\1f501";
   }
   & dd {
     &.action-die {
       &:has(~ .action-die) {
-        &:before {
+        &::before {
           content: "(act: ";
         }
       }
-      &:not(:has(~ .action-die)):after {
+      &:not(:has(~ .action-die))::after {
         content: ") ";
       }
     }
     &.challenge-die {
-      &.from:before {
+      &.from::before {
         content: "(vs: ";
       }
       &.to {
-        &:before {
+        &::before {
           content: none;
         }
-        &:after {
+        &::after {
           content: ") ";
         }
       }
@@ -763,42 +763,43 @@
 
 /* src/mechanics/css/dlist-meter.css */
 .iron-vault-mechanics dl.meter {
-  &:before {
+  &::before {
     content: "\1f4ca";
   }
   & dd {
     &.delta {
-      &:before {
+      &::before {
         color: var(--text-muted);
       }
       &.positive {
         color: var(--text-success);
-        &:before {
+        &::before {
           content: " + ";
         }
       }
       &.negative {
         color: var(--text-error);
-        &:before {
+        &::before {
           content: " - ";
         }
       }
     }
     &.from {
-      &:before {
+      &::before {
         content: " (";
       }
-      &:after {
+      &::after {
         content: " \2192  ";
       }
     }
-    &.to:after {
+    &.to::after {
       content: ")";
     }
     &.action-die {
       &:has(~ .action-die) {
+        /* Intentionally empty - selector for styling when followed by another action-die */
       }
-      &:not(:has(~ .action-die)):after {
+      &:not(:has(~ .action-die))::after {
         content: ") ";
       }
     }
@@ -807,7 +808,7 @@
 
 /* src/mechanics/css/dlist-burn.css */
 .iron-vault-mechanics dl.burn {
-  &:before {
+  &::before {
     content: "\1f525";
   }
   & dd {
@@ -819,12 +820,12 @@
 
 /* src/mechanics/css/dlist-progress.css */
 .iron-vault-mechanics .progress {
-  &:before {
+  &::before {
     content: "\23e9";
   }
   & dd {
     &.track-name {
-      &:after {
+      &::after {
         content: ": ";
       }
     }
@@ -835,14 +836,14 @@
       &.negative {
         color: var(--text-error);
       }
-      &:before {
+      &::before {
         color: var(--text-normal);
       }
-      &.positive:before {
+      &.positive::before {
         color: var(--text-success);
         content: "+";
       }
-      &.negative:before {
+      &.negative::before {
         color: var(--text-error);
         content: "-";
       }
@@ -850,10 +851,10 @@
     &.rank {
       text-transform: capitalize;
       color: var(--text-muted);
-      &:before {
+      &::before {
         content: " (";
       }
-      &:after {
+      &::after {
         content: ") = ";
       }
     }
@@ -863,14 +864,14 @@
     &.to-ticks {
       color: var(--text-accent);
     }
-    &.from-boxes:after,
-    &.to-boxes:after {
+    &.from-boxes::after,
+    &.to-boxes::after {
       content: "b/";
     }
-    &.from-ticks:after {
+    &.from-ticks::after {
       content: "t \2192  ";
     }
-    &.to-ticks:after {
+    &.to-ticks::after {
       content: "t";
     }
     &.from-ticks,
@@ -882,12 +883,12 @@
 
 /* src/mechanics/css/dlist-track.css */
 .iron-vault-mechanics .track {
-  &:before {
+  &::before {
     content: "\274e";
   }
   & dd {
     &.track-name {
-      &:after {
+      &::after {
         content: ": ";
       }
     }
@@ -897,14 +898,14 @@
     &.to-ticks {
       color: var(--text-accent);
     }
-    &.from-boxes:after,
-    &.to-boxes:after {
+    &.from-boxes::after,
+    &.to-boxes::after {
       content: "b/";
     }
-    &.from-ticks:after {
+    &.from-ticks::after {
       content: "t \2192  ";
     }
-    &.to-ticks:after {
+    &.to-ticks::after {
       content: "t";
     }
     &.from-ticks,
@@ -916,27 +917,27 @@
 
 /* src/mechanics/css/dlist-track-status.css */
 .iron-vault-mechanics dl.track-status {
-  &:before {
+  &::before {
     content: "\274e";
   }
   & dd {
-    &.track-name:has(~ .track-status[data-value=added]) {
-      &:before {
+    &.track-name:has(~ .track-status[data-value="added"]) {
+      &::before {
         content: "Track added: ";
       }
     }
-    &.track-name:has(~ .track-status[data-value=removed]) {
-      &:before {
+    &.track-name:has(~ .track-status[data-value="removed"]) {
+      &::before {
         content: "Track completed: ";
       }
     }
-    &.track-name:has(~ .track-status[data-value=completed]) {
-      &:before {
+    &.track-name:has(~ .track-status[data-value="completed"]) {
+      &::before {
         content: "Track completed: ";
       }
     }
-    &.track-name:has(~ .track-status[data-value=reopened]) {
-      &:before {
+    &.track-name:has(~ .track-status[data-value="reopened"]) {
+      &::before {
         content: "Track marked incomplete: ";
       }
     }
@@ -948,36 +949,36 @@
 
 /* src/mechanics/css/dlist-xp.css */
 .iron-vault-mechanics dl.xp {
-  &:before {
+  &::before {
     content: "\1f4a1";
   }
   & dd {
     &.delta {
-      &:before {
+      &::before {
         color: var(--text-muted);
       }
       &.positive {
         color: var(--text-success);
-        &:before {
+        &::before {
           content: "XP +";
         }
       }
       &.negative {
         color: var(--text-error);
-        &:before {
+        &::before {
           content: "XP -";
         }
       }
     }
     &.from {
-      &:before {
+      &::before {
         content: " (";
       }
-      &:after {
+      &::after {
         content: " \2192  ";
       }
     }
-    &.to:after {
+    &.to::after {
       content: ")";
     }
   }
@@ -985,12 +986,12 @@
 
 /* src/mechanics/css/dlist-clock.css */
 .iron-vault-mechanics dl.clock {
-  &:before {
+  &::before {
     content: "\1f552";
   }
   & dd {
     &.clock-name {
-      &:after {
+      &::after {
         content: ": ";
       }
     }
@@ -1001,15 +1002,15 @@
     }
     &.from,
     &.to {
-      &:before {
+      &::before {
         content: none;
       }
-      &:after {
+      &::after {
         content: "/";
       }
     }
     &.out-of:has(~ .out-of) {
-      &:after {
+      &::after {
         content: " \2192  ";
       }
     }
@@ -1021,17 +1022,17 @@
 
 /* src/mechanics/css/dlist-clock-status.css */
 .iron-vault-mechanics dl.clock-status {
-  &:before {
+  &::before {
     content: "\1f552";
   }
   & dd {
-    &.clock-name:has(~ .clock-status[data-value=added]) {
-      &:before {
+    &.clock-name:has(~ .clock-status[data-value="added"]) {
+      &::before {
         content: "Clock added: ";
       }
     }
-    &.clock-name:has(~ .clock-status[data-value=resolved]) {
-      &:before {
+    &.clock-name:has(~ .clock-status[data-value="resolved"]) {
+      &::before {
         content: "Clock resolved: ";
       }
     }
@@ -1043,22 +1044,22 @@
 
 /* src/mechanics/css/dlist-oracle.css */
 .iron-vault-mechanics dl.oracle {
-  &:has(dd.replaced[data-value=true]) {
+  &:has(dd.replaced[data-value="true"]) {
     & dd.result {
       text-decoration: line-through;
       color: var(--text-faint);
-      &:before,
-      &:after {
+      &::before,
+      &::after {
         color: var(--text-faint);
       }
     }
   }
   &:has(dd.cursed) ~ blockquote > .oracle-container > dl.oracle {
-    &:before {
+    &::before {
       content: "\1f480";
     }
   }
-  &:before {
+  &::before {
     content: "\1f52e";
   }
   & ~ blockquote {
@@ -1067,20 +1068,20 @@
     border-left-style: dashed;
   }
   & dd {
-    &.name:after {
+    &.name::after {
       content: " ";
     }
     &.roll {
-      &:before {
+      &::before {
         content: "(=";
       }
-      &:after {
+      &::after {
         content: ") ";
       }
     }
     &.result {
-      &:before,
-      &:after {
+      &::before,
+      &::after {
         content: '"';
       }
     }
@@ -1088,7 +1089,7 @@
       display: none;
     }
     &.cursed {
-      &:before {
+      &::before {
         content: "\1f480=";
       }
     }
@@ -1097,19 +1098,19 @@
 
 /* src/mechanics/css/dlist-impact.css */
 .iron-vault-mechanics dl.impact {
-  &:before {
+  &::before {
     content: "\1f4a5";
   }
   & dd.impact-marked {
     display: none;
   }
-  &:has(.impact-marked[data-value=false]) {
+  &:has(.impact-marked[data-value="false"]) {
     & dd.impact-name::after {
       color: var(--text-success);
       content: " unmarked \2b21";
     }
   }
-  &:has(.impact-marked[data-value=true]) {
+  &:has(.impact-marked[data-value="true"]) {
     & dd.impact-name::after {
       color: var(--text-error);
       content: " marked \2b22";
@@ -1126,7 +1127,7 @@
 
 /* src/mechanics/css/dlist-initiative.css */
 .iron-vault-mechanics dl.initiative {
-  &:before {
+  &::before {
     content: "\2694\fe0f";
   }
   & dd {
@@ -1342,7 +1343,7 @@ ul.iron-vault-asset-list {
 }
 
 /* src/sidebar/css/sidebar.css */
-[data-type=iron-vault-sidebar-view] {
+[data-type="iron-vault-sidebar-view"] {
   & .view-content {
     padding: 0;
     & > :first-child {
@@ -1459,18 +1460,20 @@ table.iron-vault-oracle-table {
   & ol > li {
     margin-inline-start: 0;
   }
+
   @container iron-vault-track (min-width: 460px) {
     max-width: 640px;
   }
+
   @container iron-vault-track (min-width: 640px) {
     max-width: 768px;
   }
   & .track-xp {
     font-weight: var(--font-semibold);
-    &:before {
+    &::before {
       content: "+";
     }
-    &:after {
+    &::after {
       content: " XP";
     }
   }
@@ -1535,6 +1538,7 @@ table.iron-vault-oracle-table {
     flex-flow: row wrap;
     justify-content: center;
     max-width: 240px;
+
     @container iron-vault-track (min-width: 460px) {
       flex-wrap: nowrap;
     }
@@ -1542,6 +1546,7 @@ table.iron-vault-oracle-table {
       width: 100%;
       padding: 0;
       margin: 0;
+
       @container iron-vault-track (min-width: 460px) {
         width: auto;
       }
@@ -1550,12 +1555,14 @@ table.iron-vault-oracle-table {
     & > input,
     & > span {
       order: 1;
+
       @container iron-vault-track (min-width: 460px) {
         order: 0;
       }
     }
     & > button:last-of-type {
       order: 2;
+
       @container iron-vault-track (min-width: 460px) {
         order: 0;
       }
@@ -1566,6 +1573,7 @@ table.iron-vault-oracle-table {
     }
     & > input {
       margin-left: 5em;
+
       @container iron-vault-track (min-width: 460px) {
         margin-left: auto;
       }
@@ -1581,10 +1589,12 @@ table.iron-vault-oracle-table {
       width: 24px;
       height: 24px;
       font-size: 16px;
+
       @container iron-vault-track (min-width: 460px) {
         height: 32px;
         width: 32px;
       }
+
       @container iron-vault-track (min-width: 640px) {
         height: 42px;
         width: 42px;
@@ -1638,6 +1648,7 @@ table.iron-vault-oracle-table {
     vector-effect: non-scaling-stroke;
   }
   max-width: 200px;
+
   @container iron-vault-clock (min-width: 300px) {
     max-width: 300px;
   }
@@ -1660,7 +1671,7 @@ table.iron-vault-oracle-table {
   }
   &:not(:hover) {
     & .clock-segment {
-      &[aria-selected=true] {
+      &[aria-selected="true"] {
         & ~ .clock-segment {
           fill: var(--interactive-normal);
         }
@@ -1695,14 +1706,14 @@ table.iron-vault-oracle-table {
     }
   }
   & > .clock-segments {
-    & input[type=number] {
+    & input[type="number"] {
       width: 3em;
       background-color: transparent;
       font-size: 1em;
       display: inline;
       margin-left: 0.2em;
     }
-    & label:has(input[type=checkbox]) {
+    & label:has(input[type="checkbox"]) {
       display: flex;
       flex-flow: row nowrap;
       align-items: center;
@@ -1775,13 +1786,13 @@ table.iron-vault-oracle-table {
       }
     }
   }
-  & label:has(> input[type=checkbox]) {
+  & label:has(> input[type="checkbox"]) {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     font-weight: var(--font-semibold);
   }
-  & label > input[type=checkbox] {
+  & label > input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
     border: none !important;
@@ -1902,7 +1913,7 @@ table.iron-vault-oracle-table {
             font-weight: var(--font-semibold);
             padding: 0 0.4em;
           }
-          &:has(> label > input[type=radio]) {
+          &:has(> label > input[type="radio"]) {
             flex-grow: 1;
             background-color: var(--interactive-normal);
             &:hover {
@@ -1912,7 +1923,7 @@ table.iron-vault-oracle-table {
               border-right: 2px solid var(--background-primary);
             }
           }
-          &:has(> label > input[type=radio]:checked) {
+          &:has(> label > input[type="radio"]:checked) {
             background-color: var(--interactive-accent);
           }
           & > label {
@@ -1940,7 +1951,7 @@ table.iron-vault-oracle-table {
           padding: 0;
         }
       }
-      & input[type=radio] {
+      & input[type="radio"] {
         appearance: none;
         -webkit-appearance: none;
         margin: 0;
@@ -2219,7 +2230,7 @@ table.iron-vault-oracle-table {
     & dd {
       font-size: 1.6em;
       display: flex;
-      flex: row nowrap;
+      flex-flow: row nowrap;
       align-items: center;
       justify-content: center;
       gap: 0.2em;
@@ -2334,13 +2345,13 @@ table.iron-vault-oracle-table {
     cursor: pointer;
     text-transform: uppercase;
   }
-  & label:has(> input[type=checkbox]) {
+  & label:has(> input[type="checkbox"]) {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     font-weight: var(--font-semibold);
   }
-  & label > input[type=checkbox] {
+  & label > input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
     border: none !important;
@@ -2558,10 +2569,10 @@ table.iron-vault-oracle-table {
         text-overflow: ellipsis;
         max-height: 10lh;
       }
-      dd[data-key=parentSchema] {
+      dd[data-key="parentSchema"] {
         display: none;
       }
-      dt[data-key=parentSchema] {
+      dt[data-key="parentSchema"] {
         display: none;
       }
     }
@@ -2867,15 +2878,15 @@ table.iron-vault-oracle-table {
   top: calc(env(safe-area-inset-top) + 10px);
   right: 12px;
 }
-.callout[data-callout=spoiler] {
+.callout[data-callout="spoiler"] {
   --callout-icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 0h512v512H0z" fill="#000" fill-opacity="1"></path><g class="" style="" transform="translate(0,0)"><path d="M101.1 24.88L135.5 157l88.1 4.8-3-17.2-1.9-11.2 123.3 7.4 4.9 27.8 75.9 4.2-32.5-124.62-289.2-23.3zm-18.82 1.6c-30.5 11.9-55.7 53.1-49.8 75.32l3.3 11.8c.6-1.8 1.3-3.5 2.1-5.3 9.9-23.72 26.5-46.82 50.3-58.92l-5.9-22.9zm10.8 41.6c-16.7 10-29.9 28.1-38 47.42-5.2 12.5-8 25.6-8.7 36.5l17.46 63.5c12.8-21.2 30.19-42.3 53.96-52.4L93.08 68.08zM240.3 152.8l20.2 117.4 87 4.3L326.8 158l-86.5-5.2zm46.8 21.2a25.29 20.33 24.87 0 1 2.4 0 25.29 20.33 24.87 0 1 27.2 22.4 25.29 20.33 24.87 0 1-13.2 19.2l20.8 37.5-48.7-2.2 10.9-36.1a25.29 20.33 24.87 0 1-18.5-20.6 25.29 20.33 24.87 0 1 19.1-20.2zm-146.8 1.3l15 57.6 81.2 3.4-9.8-56.2-86.4-4.8zm-17.9 5.6c-21.8 10.6-39.52 36.3-51.73 59.4l12.46 45.3c10.27-15.7 23.97-32.8 53.57-49.9l-14.3-54.8zm227.8 5.9l9.7 54.7 81.7 3.5-14.1-53.9-77.3-4.3zM160 251.1l31.2 119.6 289.2 23.2-34-130.6-83.3-3.5 6 33.9-123.8-6.3-5.7-32.9-79.6-3.4zm-18.6 2.7c-32 19.4-39.7 35.9-51.79 55.4l21.49 78.1c.3-.5.6-1.1.9-1.6 10.6-19.3 27.8-37.7 51.1-48.5l-21.7-83.4zM168 355.7c-17.7 9.1-31.2 23.7-39.6 39-4.5 8.1-7.3 16.3-8.7 23.7l11.7 42.4 1.6.2c-3.8-27.6 11.4-60.5 41.3-81.1l-6.3-24.2zm26.3 34c-32.6 17.3-46.5 52.4-41.8 72.9l289.8 24.5c-5.3-7.8-8.7-17.9-8.6-28.5l-22.4-9 46.3-7.3-13.5-12.8c5.6-7 13.7-13.1 24.9-17.7l-274.7-22.1z" fill="#fff" fill-opacity="1"></path></g></svg>';
   --callout-color: var(--color-purple-rgb);
-  & .callout-title-inner:before {
+  & .callout-title-inner::before {
     content: "(spoiler) ";
     font-weight: var(--font-semibold);
   }
 }
-.internal-embed[alt~=iv-embed] {
+.internal-embed[alt~="iv-embed"] {
   & .markdown-embed-title,
   & .markdown-embed-link {
     display: none;
@@ -3107,7 +3118,7 @@ table.iron-vault-oracle-table {
   margin: 0;
 }
 
-@media (max-width: 700px) {
+@media (width <= 700px) {
   .iron-vault-character.assets > ul {
     grid-template-columns: 1fr;
   }

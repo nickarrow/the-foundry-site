@@ -5,13 +5,20 @@ const navTree = buildNavigationTree();
 const currentPath = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 
-function renderNavNode(node: NavNode, base: string, currentPath: string, depth: number = 0): string {
+function renderNavNode(
+  node: NavNode,
+  base: string,
+  currentPath: string,
+  depth: number = 0
+): string {
   const href = `${base}/${node.slug}`;
   const isActive = currentPath === href || currentPath === `${href}/`;
   const hasChildren = node.children.length > 0;
-  
+
   if (hasChildren) {
-    const childrenHtml = node.children.map(child => renderNavNode(child, base, currentPath, depth + 1)).join('');
+    const childrenHtml = node.children
+      .map((child) => renderNavNode(child, base, currentPath, depth + 1))
+      .join('');
     return `
       <div class="nav-folder collapsed">
         <div class="nav-folder-title">${node.name}</div>
@@ -34,34 +41,66 @@ function renderNavNode(node: NavNode, base: string, currentPath: string, depth: 
   <div class="sidebar-header">
     <a href={base} class="site-title">The Foundry</a>
     <div class="sidebar-controls">
-      <button class="toggle-all-folders" title="Expand/Collapse all" aria-label="Toggle all folders">
+      <button
+        class="toggle-all-folders"
+        title="Expand/Collapse all"
+        aria-label="Toggle all folders"
+      >
         <!-- Lucide chevrons-down-up (shown when collapsed - click to expand) -->
-        <svg class="icon-expand" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m7 20 5-5 5 5"/>
-          <path d="m7 4 5 5 5-5"/>
+        <svg
+          class="icon-expand"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m7 20 5-5 5 5"></path>
+          <path d="m7 4 5 5 5-5"></path>
         </svg>
         <!-- Lucide chevrons-up-down (shown when expanded - click to collapse) -->
-        <svg class="icon-collapse" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-          <path d="m7 15 5 5 5-5"/>
-          <path d="m7 9 5-5 5 5"/>
+        <svg
+          class="icon-collapse"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          style="display: none;"
+        >
+          <path d="m7 15 5 5 5-5"></path>
+          <path d="m7 9 5-5 5 5"></path>
         </svg>
       </button>
     </div>
   </div>
-  
+
   <div class="sidebar-search">
     <div id="search-container"></div>
   </div>
-  
+
   <nav class="sidebar-nav">
-    {navTree.map(node => (
-      <Fragment set:html={renderNavNode(node, base, currentPath)} />
-    ))}
+    {navTree.map((node) => <Fragment set:html={renderNavNode(node, base, currentPath)} />)}
   </nav>
 </aside>
 
 <button class="sidebar-toggle" aria-label="Toggle sidebar">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+  >
     <line x1="3" y1="12" x2="21" y2="12"></line>
     <line x1="3" y1="6" x2="21" y2="6"></line>
     <line x1="3" y1="18" x2="21" y2="18"></line>

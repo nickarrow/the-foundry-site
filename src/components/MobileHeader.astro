@@ -10,7 +10,7 @@ const base = import.meta.env.BASE_URL;
 
 // Get all valid page slugs and build a slug-to-name map
 const allFiles = getAllContentFiles();
-const validSlugs = new Set(allFiles.map(f => f.slug));
+const validSlugs = new Set(allFiles.map((f) => f.slug));
 
 // Build a map of slug -> display name from the navigation tree
 const navTree = buildNavigationTree();
@@ -29,24 +29,22 @@ function mapNavNodes(nodes: NavNode[]) {
 mapNavNodes(navTree);
 
 // Build breadcrumb trail from slug
-const parts = slug ? slug.split('/').filter(p => p) : [];
-const fullCrumbs: { name: string; href: string | null }[] = [
-  { name: 'Home', href: base }
-];
+const parts = slug ? slug.split('/').filter((p) => p) : [];
+const fullCrumbs: { name: string; href: string | null }[] = [{ name: 'Home', href: base }];
 
 let currentPath = '';
 for (const part of parts) {
   currentPath += (currentPath ? '/' : '') + part;
-  
+
   let name = slugToName.get(currentPath);
   if (!name) {
     name = part
       .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
       .replace(/\d+\.\s*/, '');
   }
-  
+
   const href = validSlugs.has(currentPath) ? `${base}/${currentPath}` : null;
   fullCrumbs.push({ name, href });
 }
@@ -61,7 +59,7 @@ if (shouldCollapse) {
   crumbs = [
     fullCrumbs[0], // Home
     { name: '...', href: null, isEllipsis: true },
-    ...fullCrumbs.slice(-2) // Parent + Current
+    ...fullCrumbs.slice(-2), // Parent + Current
   ];
 } else {
   crumbs = fullCrumbs;
@@ -70,33 +68,42 @@ if (shouldCollapse) {
 
 <header class="mobile-header">
   <button class="mobile-menu-toggle" aria-label="Toggle sidebar">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
       <line x1="3" y1="18" x2="21" y2="18"></line>
     </svg>
   </button>
-  
+
   <nav class="mobile-breadcrumbs" aria-label="Breadcrumb">
     <ol>
-      {crumbs.map((crumb, i) => (
-        <li>
-          {i < crumbs.length - 1 ? (
-            <>
-              {crumb.isEllipsis ? (
-                <span class="ellipsis">{crumb.name}</span>
-              ) : crumb.href ? (
-                <a href={crumb.href}>{crumb.name}</a>
-              ) : (
-                <span class="folder">{crumb.name}</span>
-              )}
-              <span class="separator">/</span>
-            </>
-          ) : (
-            <span class="current">{crumb.name}</span>
-          )}
-        </li>
-      ))}
+      {
+        crumbs.map((crumb, i) => (
+          <li>
+            {i < crumbs.length - 1 ? (
+              <>
+                {crumb.isEllipsis ? (
+                  <span class="ellipsis">{crumb.name}</span>
+                ) : crumb.href ? (
+                  <a href={crumb.href}>{crumb.name}</a>
+                ) : (
+                  <span class="folder">{crumb.name}</span>
+                )}
+                <span class="separator">/</span>
+              </>
+            ) : (
+              <span class="current">{crumb.name}</span>
+            )}
+          </li>
+        ))
+      }
     </ol>
   </nav>
 </header>
@@ -114,11 +121,11 @@ if (shouldCollapse) {
     align-items: center;
     justify-content: center;
   }
-  
+
   .mobile-menu-toggle:hover {
     background: var(--bg-hover);
   }
-  
+
   .mobile-breadcrumbs {
     flex: 1;
     min-width: 0;
@@ -126,7 +133,7 @@ if (shouldCollapse) {
     color: var(--text-muted);
     overflow: hidden;
   }
-  
+
   .mobile-breadcrumbs ol {
     display: flex;
     flex-wrap: nowrap;
@@ -137,40 +144,40 @@ if (shouldCollapse) {
     overflow-x: auto;
     scrollbar-width: none;
   }
-  
+
   .mobile-breadcrumbs ol::-webkit-scrollbar {
     display: none;
   }
-  
+
   .mobile-breadcrumbs li {
     display: flex;
     align-items: center;
     gap: 0.25rem;
     white-space: nowrap;
   }
-  
+
   .mobile-breadcrumbs a {
     color: var(--link-color);
     text-decoration: none;
   }
-  
+
   .mobile-breadcrumbs a:hover {
     text-decoration: underline;
   }
-  
+
   .mobile-breadcrumbs .separator {
     color: var(--text-muted);
     opacity: 0.5;
   }
-  
+
   .mobile-breadcrumbs .folder {
     color: var(--text-secondary);
   }
-  
+
   .mobile-breadcrumbs .ellipsis {
     color: var(--text-muted);
   }
-  
+
   .mobile-breadcrumbs .current {
     color: var(--text-primary);
   }
@@ -180,7 +187,7 @@ if (shouldCollapse) {
   // Mobile menu toggle - controls the sidebar
   const mobileToggle = document.querySelector('.mobile-menu-toggle');
   const sidebar = document.querySelector('.sidebar');
-  
+
   mobileToggle?.addEventListener('click', () => {
     sidebar?.classList.toggle('open');
   });
