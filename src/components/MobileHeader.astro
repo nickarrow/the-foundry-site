@@ -185,10 +185,21 @@ if (shouldCollapse) {
 
 <script>
   // Mobile menu toggle - controls the sidebar
-  const mobileToggle = document.querySelector('.mobile-menu-toggle');
-  const sidebar = document.querySelector('.sidebar');
-
-  mobileToggle?.addEventListener('click', () => {
-    sidebar?.classList.toggle('open');
-  });
+  function initMobileToggle() {
+    const mobileToggle = document.querySelector('.mobile-menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (mobileToggle && !mobileToggle.dataset.initialized) {
+      mobileToggle.dataset.initialized = 'true';
+      mobileToggle.addEventListener('click', () => {
+        sidebar?.classList.toggle('open');
+      });
+    }
+  }
+  
+  // Run on initial load
+  document.addEventListener('DOMContentLoaded', initMobileToggle);
+  
+  // Run on View Transitions navigation
+  document.addEventListener('astro:after-swap', initMobileToggle);
 </script>

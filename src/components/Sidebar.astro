@@ -37,7 +37,7 @@ function renderNavNode(
 }
 ---
 
-<aside class="sidebar">
+<aside class="sidebar" transition:persist transition:persist-props>
   <div class="sidebar-header">
     <a href={base} class="site-title">The Foundry</a>
     <div class="sidebar-controls">
@@ -84,7 +84,12 @@ function renderNavNode(
   </div>
 
   <div class="sidebar-search">
-    <div id="search-container"></div>
+    <div id="search-container">
+      <!-- Placeholder input shown until Pagefind loads to prevent layout flash -->
+      <div class="search-placeholder">
+        <input type="text" placeholder="Search..." disabled />
+      </div>
+    </div>
   </div>
 
   <nav class="sidebar-nav">

@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
   title: string;
 }
@@ -16,15 +18,17 @@ const { title } = Astro.props;
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/main.css`} />
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles/iron-vault.css`} />
     <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/pagefind/pagefind-ui.css`} />
+    <ViewTransitions />
   </head>
   <body>
     <div class="app">
       <slot />
     </div>
     <script is:inline>
-      // Initialize Pagefind search after page loads
-      window.addEventListener('DOMContentLoaded', function () {
-        // Load Pagefind UI script dynamically
+      // Initialize Pagefind search - runs once since sidebar persists
+      function initPagefind() {
+        if (document.querySelector('.pagefind-ui')) return; // Already initialized
+        
         const script = document.createElement('script');
         script.src = '/the-foundry-site/pagefind/pagefind-ui.js';
         script.onload = function () {
@@ -34,22 +38,102 @@ const { title } = Astro.props;
             showImages: false,
             resetStyles: false,
           });
+          const placeholder = document.querySelector('.search-placeholder');
+          if (placeholder) {
+            placeholder.remove();
+          }
         };
         script.onerror = function () {
-          // Pagefind not available - show fallback
-          const container = document.getElementById('search-container');
-          if (container) {
-            container.innerHTML =
-              '<input type="text" placeholder="Search..." disabled style="width:100%;padding:0.5rem 0.75rem;background:var(--bg-tertiary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-muted);font-size:0.9rem;cursor:not-allowed;" />';
+          const placeholder = document.querySelector('.search-placeholder input');
+          if (placeholder) {
+            placeholder.disabled = false;
+            placeholder.style.cursor = 'text';
           }
         };
         document.head.appendChild(script);
+      }
+      
+      // Update active nav item on navigation
+      function updateActiveNavItem() {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-item').forEach(item => {
+          const href = item.getAttribute('href');
+          const isActive = currentPath === href || currentPath === href + '/';
+          item.classList.toggle('active', isActive);
+        });
+      }
+      
+      // Run on initial load
+      document.addEventListener('DOMContentLoaded', function() {
+        initPagefind();
+        updateActiveNavItem();
+      });
+      
+      // Run on View Transitions navigation
+      document.addEventListener('astro:after-swap', function() {
+        updateActiveNavItem();
       });
     </script>
     <script>
-      // Mobile sidebar toggle
-      document.addEventListener('DOMContentLoaded', () => {
+      // Helper function to save folder states to localStorage
+      function saveFolderStates() {
+        const states: Record<string, string> = {};
+        document.querySelectorAll('.nav-folder').forEach((folder, index) => {
+          const title =
+            folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
+          states[title] = folder.classList.contains('collapsed') ? 'collapsed' : 'expanded';
+        });
+        localStorage.setItem('sidebarFolderStates', JSON.stringify(states));
+      }
+
+      // Helper function to update toggle button icon
+      function updateToggleIcon() {
+        const toggleBtn = document.querySelector('.toggle-all-folders');
+        const iconExpand = toggleBtn?.querySelector('.icon-expand') as HTMLElement;
+        const iconCollapse = toggleBtn?.querySelector('.icon-collapse') as HTMLElement;
+        
+        const allFolders = document.querySelectorAll('.nav-folder');
+        const allCollapsed = Array.from(allFolders).every((f) =>
+          f.classList.contains('collapsed')
+        );
+
+        if (iconExpand && iconCollapse) {
+          iconExpand.style.display = allCollapsed ? 'block' : 'none';
+          iconCollapse.style.display = allCollapsed ? 'none' : 'block';
+        }
+      }
+
+      // Helper function to expand folders containing active item and scroll to it
+      // Called on navigation - expands path to active item and saves state
+      function expandToActiveAndScroll() {
+        const activeItem = document.querySelector('.nav-item.active');
+        if (activeItem) {
+          let parent = activeItem.parentElement;
+          while (parent) {
+            if (parent.classList.contains('nav-folder')) {
+              parent.classList.remove('collapsed');
+            }
+            parent = parent.parentElement;
+          }
+          saveFolderStates();
+          updateToggleIcon();
+          activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
+        }
+      }
+
+      // Sidebar initialization - runs once on first load (or hard refresh)
+      // Restores state from localStorage and sets up event listeners
+      function initSidebar() {
         const sidebar = document.querySelector('.sidebar');
+        if (!sidebar) return;
+        
+        // If already initialized (sidebar persisted via View Transitions),
+        // just expand to active item and scroll - don't re-restore from localStorage
+        if (sidebar.dataset.initialized === 'true') {
+          expandToActiveAndScroll();
+          return;
+        }
+        sidebar.dataset.initialized = 'true';
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
@@ -62,7 +146,7 @@ const { title } = Astro.props;
           }
         });
 
-        // Restore folder states from localStorage
+        // Restore folder states from localStorage (only on fresh load)
         const savedStates = JSON.parse(localStorage.getItem('sidebarFolderStates') || '{}');
         document.querySelectorAll('.nav-folder').forEach((folder, index) => {
           const title =
@@ -72,21 +156,9 @@ const { title } = Astro.props;
           } else if (savedStates[title] === 'collapsed') {
             folder.classList.add('collapsed');
           }
-          // If no saved state, keep the default (collapsed)
         });
 
-        // Save folder state on toggle
-        function saveFolderStates() {
-          const states: Record<string, string> = {};
-          document.querySelectorAll('.nav-folder').forEach((folder, index) => {
-            const title =
-              folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
-            states[title] = folder.classList.contains('collapsed') ? 'collapsed' : 'expanded';
-          });
-          localStorage.setItem('sidebarFolderStates', JSON.stringify(states));
-        }
-
-        // Collapsible nav folders
+        // Set up click handlers for collapsible nav folders
         document.querySelectorAll('.nav-folder > .nav-folder-title').forEach((title) => {
           title.addEventListener('click', () => {
             title.parentElement?.classList.toggle('collapsed');
@@ -95,24 +167,8 @@ const { title } = Astro.props;
           });
         });
 
-        // Toggle all folders button (single button that switches icons)
+        // Set up toggle all folders button
         const toggleBtn = document.querySelector('.toggle-all-folders');
-        const iconExpand = toggleBtn?.querySelector('.icon-expand') as HTMLElement;
-        const iconCollapse = toggleBtn?.querySelector('.icon-collapse') as HTMLElement;
-
-        function updateToggleIcon() {
-          const allFolders = document.querySelectorAll('.nav-folder');
-          const allCollapsed = Array.from(allFolders).every((f) =>
-            f.classList.contains('collapsed')
-          );
-
-          if (iconExpand && iconCollapse) {
-            // Show expand icon when all are collapsed, collapse icon when any are expanded
-            iconExpand.style.display = allCollapsed ? 'block' : 'none';
-            iconCollapse.style.display = allCollapsed ? 'none' : 'block';
-          }
-        }
-
         toggleBtn?.addEventListener('click', () => {
           const allFolders = document.querySelectorAll('.nav-folder');
           const allCollapsed = Array.from(allFolders).every((f) =>
@@ -120,10 +176,8 @@ const { title } = Astro.props;
           );
 
           if (allCollapsed) {
-            // Expand all
             allFolders.forEach((folder) => folder.classList.remove('collapsed'));
           } else {
-            // Collapse all
             allFolders.forEach((folder) => folder.classList.add('collapsed'));
           }
 
@@ -131,27 +185,17 @@ const { title } = Astro.props;
           saveFolderStates();
         });
 
-        // Update icon on initial load
+        // Initial UI setup
         updateToggleIcon();
+        expandToActiveAndScroll();
+      }
 
-        // Auto-expand folders containing the active page
-        const activeItem = document.querySelector('.nav-item.active');
-        if (activeItem) {
-          let parent = activeItem.parentElement;
-          while (parent) {
-            if (parent.classList.contains('nav-folder')) {
-              parent.classList.remove('collapsed');
-            }
-            parent = parent.parentElement;
-          }
-          saveFolderStates();
-
-          // Scroll active item into view
-          activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
-        }
-
-        // Collapsible callouts - toggle on title click
+      // Collapsible callouts - needs to run on each page
+      function initCallouts() {
         document.querySelectorAll('.callout.is-collapsible .callout-title').forEach((title) => {
+          if ((title as HTMLElement).dataset.initialized === 'true') return;
+          (title as HTMLElement).dataset.initialized = 'true';
+          
           title.addEventListener('click', () => {
             const callout = title.closest('.callout');
             const content = callout?.querySelector('.callout-content') as HTMLElement;
@@ -164,9 +208,20 @@ const { title } = Astro.props;
             }
           });
 
-          // Make title look clickable
           (title as HTMLElement).style.cursor = 'pointer';
         });
+      }
+
+      // Run on initial load
+      document.addEventListener('DOMContentLoaded', () => {
+        initSidebar();
+        initCallouts();
+      });
+      
+      // Run on View Transitions navigation
+      document.addEventListener('astro:after-swap', () => {
+        initSidebar();
+        initCallouts();
       });
     </script>
   </body>
