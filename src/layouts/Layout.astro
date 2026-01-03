@@ -75,17 +75,6 @@ const { title } = Astro.props;
       });
     </script>
     <script>
-      // Helper function to save folder states to localStorage
-      function saveFolderStates() {
-        const states: Record<string, string> = {};
-        document.querySelectorAll('.nav-folder').forEach((folder, index) => {
-          const title =
-            folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
-          states[title] = folder.classList.contains('collapsed') ? 'collapsed' : 'expanded';
-        });
-        localStorage.setItem('sidebarFolderStates', JSON.stringify(states));
-      }
-
       // Helper function to update toggle button icon
       function updateToggleIcon() {
         const toggleBtn = document.querySelector('.toggle-all-folders');
@@ -104,7 +93,6 @@ const { title } = Astro.props;
       }
 
       // Helper function to expand folders containing active item and scroll to it
-      // Called on navigation - expands path to active item and saves state
       function expandToActiveAndScroll() {
         const activeItem = document.querySelector('.nav-item.active');
         if (activeItem) {
@@ -115,20 +103,19 @@ const { title } = Astro.props;
             }
             parent = parent.parentElement;
           }
-          saveFolderStates();
           updateToggleIcon();
           activeItem.scrollIntoView({ block: 'center', behavior: 'instant' });
         }
       }
 
       // Sidebar initialization - runs once on first load (or hard refresh)
-      // Restores state from localStorage and sets up event listeners
+      // View Transitions preserves sidebar state across navigations
       function initSidebar() {
         const sidebar = document.querySelector('.sidebar');
         if (!sidebar) return;
         
         // If already initialized (sidebar persisted via View Transitions),
-        // just expand to active item and scroll - don't re-restore from localStorage
+        // just expand to active item and scroll
         if (sidebar.dataset.initialized === 'true') {
           expandToActiveAndScroll();
           return;
@@ -146,23 +133,10 @@ const { title } = Astro.props;
           }
         });
 
-        // Restore folder states from localStorage (only on fresh load)
-        const savedStates = JSON.parse(localStorage.getItem('sidebarFolderStates') || '{}');
-        document.querySelectorAll('.nav-folder').forEach((folder, index) => {
-          const title =
-            folder.querySelector('.nav-folder-title')?.textContent?.trim() || index.toString();
-          if (savedStates[title] === 'expanded') {
-            folder.classList.remove('collapsed');
-          } else if (savedStates[title] === 'collapsed') {
-            folder.classList.add('collapsed');
-          }
-        });
-
         // Set up click handlers for collapsible nav folders
         document.querySelectorAll('.nav-folder > .nav-folder-title').forEach((title) => {
           title.addEventListener('click', () => {
             title.parentElement?.classList.toggle('collapsed');
-            saveFolderStates();
             updateToggleIcon();
           });
         });
@@ -182,7 +156,6 @@ const { title } = Astro.props;
           }
 
           updateToggleIcon();
-          saveFolderStates();
         });
 
         // Initial UI setup
