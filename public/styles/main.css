@@ -49,6 +49,7 @@ html, body {
 .app {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for iOS Safari */
 }
 
 /* Mobile header - sits above the flex layout on mobile */
@@ -87,6 +88,7 @@ html, body {
   top: 0;
   left: 0;
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for iOS Safari */
   overflow-y: auto;
   z-index: 100;
 }
@@ -551,6 +553,8 @@ html, body {
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    /* Add safe area padding for iOS devices with home indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
   
   .sidebar.open {
