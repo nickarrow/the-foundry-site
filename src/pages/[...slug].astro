@@ -25,7 +25,7 @@ const { slug } = Astro.params;
 const allFiles = getAllContentFiles();
 
 // Handle homepage
-const actualSlug = slug || '1.-welcome-to-the-ironverse';
+const actualSlug = slug || 'welcome-to-ironverse';
 const fileData = getContentFile(actualSlug);
 
 if (!fileData) {
